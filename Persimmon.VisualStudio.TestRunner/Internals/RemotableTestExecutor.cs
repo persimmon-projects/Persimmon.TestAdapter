@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Persimmon.VisualStudio.TestRunner.Internals
@@ -40,7 +39,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
         /// <param name="persimmonTypeName">Target type name</param>
         /// <param name="sinkTrampoline">Execution logger interface</param>
         /// <param name="rawAction">Action delegate(TestCollector, TestAssembly)</param>
-        private async Task ExecuteAsync(
+        private void InternalExecute(
             string targetAssemblyPath,
             string persimmonPartialAssemblyName,
             string persimmonTypeName,
@@ -58,13 +57,13 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
 
             // 1. pre-load target assembly and analyze fully-qualified assembly name.
             //   --> Assebly.ReflectionOnlyLoadFrom() is load assembly into reflection-only context.
-            var preLoadAssembly = await Task.Run(() => Assembly.ReflectionOnlyLoadFrom(targetAssemblyPath));
+            var preLoadAssembly = Assembly.ReflectionOnlyLoadFrom(targetAssemblyPath);
             var assemblyFullName = preLoadAssembly.FullName;
 
             // 2. load assembly by fully-qualified assembly name.
             //   --> Assembly.Load() is load assembly into "default context."
             //   --> Failed if current AppDomain.ApplicationBase folder is not target assembly path.
-            var testAssembly = await Task.Run(() => Assembly.Load(assemblyFullName));
+            var testAssembly = Assembly.Load(assemblyFullName);
 
             sinkTrampoline.Begin(targetAssemblyPath);
 
@@ -74,7 +73,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             if (persimmonFullAssemblyName != null)
             {
                 //   and load persimmon assembly.
-                var persimmonAssembly = await Task.Run(() => Assembly.Load(persimmonFullAssemblyName));
+                var persimmonAssembly = Assembly.Load(persimmonFullAssemblyName);
 
                 // 4. Instantiate TestCollector/TestRunner class (by dynamic), and do action.
                 //   --> Because TestCollector/TestRunner class containing assembly version is unknown,
@@ -93,16 +92,21 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
         /// </summary>
         /// <param name="targetAssemblyPath">Target assembly path</param>
         /// <param name="sinkTrampoline">Execution logger interface</param>
-        private async Task InternalDiscoverAsync(
+        public void Discover(
             string targetAssemblyPath,
             ISinkTrampoline sinkTrampoline)
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(targetAssemblyPath));
             Debug.Assert(sinkTrampoline != null);
 
+            Debug.WriteLine(string.Format(
+               "{0}: Discover: TargetAssembly={1}",
+               this.GetType().FullName,
+               targetAssemblyPath));
+
             using (var pdbReader = new PdbReader())
             {
-                await pdbReader.ReadAsync(targetAssemblyPath);
+                pdbReader.Read(targetAssemblyPath);
 
                 // Callback delegate: testCase is ITestCase.
                 var callback = new Action<dynamic>(testCase =>
@@ -132,7 +136,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     });
                 });
 
-                await this.ExecuteAsync(
+                this.InternalExecute(
                     targetAssemblyPath,
                     "Persimmon",
                     "Persimmon.Internals.TestCollector",
@@ -144,33 +148,13 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
         }
 
         /// <summary>
-        /// Discover tests target assembly.
-        /// </summary>
-        /// <param name="targetAssemblyPath">Target assembly path</param>
-        /// <param name="sinkTrampoline">Execution logger interface</param>
-        public RemoteTask DiscoverAsync(
-            string targetAssemblyPath,
-            ISinkTrampoline sinkTrampoline)
-        {
-            Debug.Assert(!string.IsNullOrWhiteSpace(targetAssemblyPath));
-            Debug.Assert(sinkTrampoline != null);
-
-            Debug.WriteLine(string.Format(
-                "{0}: DiscoverAsync: TargetAssembly={1}",
-                this.GetType().FullName,
-                targetAssemblyPath));
-
-            return this.InternalDiscoverAsync(targetAssemblyPath, sinkTrampoline);
-        }
-
-        /// <summary>
         /// Run tests target assembly.
         /// </summary>
         /// <param name="targetAssemblyPath">Target assembly path</param>
         /// <param name="fullyQualifiedTestNames">Target test names. Run all tests if empty.</param>
         /// <param name="sinkTrampoline">Execution logger interface</param>
         /// <param name="token">CancellationToken</param>
-        private Task InternalRunAsync(
+        private void InternalRun(
             string targetAssemblyPath,
             string[] fullyQualifiedTestNames,
             ISinkTrampoline sinkTrampoline,
@@ -181,35 +165,51 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             Debug.Assert(sinkTrampoline != null);
             Debug.Assert(token != null);
 
-            // Callback delegate: testResult is ITestResult.
-            var callback = new Action<dynamic>(testResult =>
+            using (var pdbReader = new PdbReader())
             {
-                MemberInfo member = testResult.DeclaredMember;
-                var method = member as MethodInfo;
-                var type = (method != null) ? method.DeclaringType : null;
+                pdbReader.Read(targetAssemblyPath);
 
-                // Re-construct results by safe serializable type. (object array)
-                sinkTrampoline.Progress(new[]
+                // Callback delegate: testResult is ITestResult.
+                var callback = new Action<dynamic>(testResult =>
                 {
-                    testResult.FullName,
-                    (type != null) ? type.FullName : member.Name,
-                    (method != null) ? method.Name : member.Name,
-                    testResult.Exceptions,  // TODO: exn may failed serialize. try convert safe types...
-                    testResult.Duration
+                    token.ThrowIfCancellationRequested();
+
+                    MemberInfo member = testResult.DeclaredMember;
+                    var method = member as MethodInfo;
+                    var type = (method != null) ? method.DeclaringType : null;
+
+                    // If enable DiaSession, lookup debug information.
+                    DiaNavigationData navigationData = null;
+                    if ((method != null) && (type != null))
+                    {
+                        navigationData = pdbReader.GetNavigationData(
+                            type.FullName,
+                            method.Name);
+                    }
+
+                    // Re-construct results by safe serializable type. (object array)
+                    sinkTrampoline.Progress(new[]
+                    {
+                        testResult.FullName,
+                        (type != null) ? type.FullName : member.Name,
+                        (method != null) ? method.Name : member.Name,
+                        (navigationData != null) ? navigationData.FileName : null,
+                        (navigationData != null) ? navigationData.MinLineNumber : -1,
+                        testResult.Exceptions, // TODO: exn may failed serialize. try convert safe types...
+                        testResult.Duration
+                    });
                 });
-            });
 
-            // TODO: Support abort by CancellationToken
-
-            return this.ExecuteAsync(
-                targetAssemblyPath,
-                "Persimmon",
-                "Persimmon.Internals.TestRunner",
-                sinkTrampoline,
-                (testRunner, testAssembly) => testRunner.RunTestsAndCallback(
-                    testAssembly,
-                    fullyQualifiedTestNames,
-                    callback));
+                this.InternalExecute(
+                    targetAssemblyPath,
+                    "Persimmon",
+                    "Persimmon.Internals.TestRunner",
+                    sinkTrampoline,
+                    (testRunner, testAssembly) => testRunner.RunTestsAndCallback(
+                        testAssembly,
+                        fullyQualifiedTestNames,
+                        callback));
+            }
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
         /// <param name="fullyQualifiedTestNames">Target test names. Run all tests if empty.</param>
         /// <param name="sinkTrampoline">Execution logger interface</param>
         /// <param name="token">CancellationToken</param>
-        public RemoteTask RunAsync(
+        public void Run(
             string targetAssemblyPath,
             string[] fullyQualifiedTestNames,
             ISinkTrampoline sinkTrampoline,
@@ -231,11 +231,11 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             Debug.Assert(token != null);
 
             Debug.WriteLine(string.Format(
-                "{0}: RunAsync: TargetAssembly={1}",
+                "{0}: Run: TargetAssembly={1}",
                 this.GetType().FullName,
                 targetAssemblyPath));
 
-            return this.InternalRunAsync(targetAssemblyPath, fullyQualifiedTestNames, sinkTrampoline, token);
+            this.InternalRun(targetAssemblyPath, fullyQualifiedTestNames, sinkTrampoline, token);
         }
     }
 }

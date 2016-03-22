@@ -38,21 +38,25 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             if (testCases_.TryGetValue(fqtn, out testCase) == false)
             {
                 // Invalid fqtn, try create only basic informational TestCase...
-                Debug.Fail("Not valid fqtn: " + fqtn);
+                //Debug.Fail("Not valid fqtn: " + fqtn);
                 testCase = new TestCase(
                     fqtn,
                     parentSink_.ExtensionUri,
                     targetAssemblyPath_);
+
+                testCase.DisplayName = args[0];
+                testCase.CodeFilePath = args[3];
+                testCase.LineNumber = args[4];
             }
 
             var testResult = new TestResult(testCase);
-            var exceptions = (Exception[])args[3];
+            var exceptions = (Exception[])args[5];
 
             // TODO: Other outcome require handled.
             //   Strategy: testCases_ included target test cases,
             //     so match and filter into Finished(), filtered test cases marking TestOutcome.Notfound.
             testResult.Outcome = (exceptions.Length >= 1) ? TestOutcome.Failed : TestOutcome.Passed;
-            testResult.Duration = args[4];
+            testResult.Duration = args[6];
 
             parentSink_.Progress(testResult);
         }

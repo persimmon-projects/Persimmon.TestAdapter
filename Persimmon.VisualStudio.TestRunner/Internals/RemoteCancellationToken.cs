@@ -14,7 +14,17 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
 
         public void InternalRegisterSink(InternalRemoteCancellationTokenSink sink)
         {
-            token_.Register(sink.Cancel);
+            token_.Register(() =>
+            {
+                try
+                {
+                    sink.Cancel();
+                }
+                catch
+                {
+                    // Ignore remote call if raised. (May be discarded AppDomain)
+                }
+            });
         }
 
         public static CancellationToken AsToken(RemoteCancellationToken remoteToken)

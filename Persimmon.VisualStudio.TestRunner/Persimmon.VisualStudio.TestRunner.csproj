@@ -55,7 +55,6 @@
     <Compile Include="Internals\DiscoverSinkTrampoline.cs" />
     <Compile Include="Internals\PdbReader.cs" />
     <Compile Include="Internals\RemoteCancellationToken.cs" />
-    <Compile Include="Internals\RemoteTask.cs" />
     <Compile Include="Internals\RunSinkTrampoline.cs" />
     <Compile Include="ITestDiscoverSink.cs" />
     <Compile Include="ITestSink.cs" />

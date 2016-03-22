@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Persimmon.VisualStudio.TestRunner.Internals
@@ -25,27 +24,24 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             }
         }
 
-        public Task<bool> ReadAsync(string executablePath)
+        public bool Read(string executablePath)
         {
-            return Task.Factory.StartNew(() =>
+            lock (this)
             {
-                lock (this)
+                this.Dispose();
+
+                try
                 {
-                    this.Dispose();
-
-                    try
-                    {
-                        diaSession_ = new DiaSession(executablePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                        return false;
-                    }
-
-                    return true;
+                    diaSession_ = new DiaSession(executablePath);
                 }
-            });
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.ToString());
+                    return false;
+                }
+
+                return true;
+            }
         }
 
         public DiaNavigationData GetNavigationData(

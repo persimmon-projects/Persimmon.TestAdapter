@@ -17,26 +17,45 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             loadedAssemblies_ = names.ToDictionary(name => name.FullName);
 
             AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
+
+            Debug.WriteLine(string.Format(
+                "AssemblyInjector: Hook: Current={0}", AppDomain.CurrentDomain));
         }
 
         private Assembly AssemblyResolve(object sender, ResolveEventArgs e)
         {
-            Debug.WriteLine(string.Format(
-                "AssemblyResolve: Name={0}, Requesting={1}, Current={2}",
-                e.Name,
-                e.RequestingAssembly,
-                AppDomain.CurrentDomain));
-
             AssemblyName name;
             lock (loadedAssemblies_)
             {
                 if (loadedAssemblies_.TryGetValue(e.Name, out name) == false)
                 {
+                    Debug.WriteLine(string.Format(
+                        "AssemblyInjector: Not found: RequireName={0}, Requesting={1}, Current={2}",
+                        e.Name,
+                        e.RequestingAssembly,
+                        AppDomain.CurrentDomain));
+
                     return null;
                 }
             }
 
+            Debug.WriteLine(string.Format(
+                "AssemblyInjector: Try to load: RequireName={0}, Name={1}, Requesting={2}, Current={3}",
+                e.Name,
+                name,
+                e.RequestingAssembly,
+                AppDomain.CurrentDomain));
+
             var assembly = Assembly.Load(name);
+
+            Debug.WriteLine(string.Format(
+                "AssemblyInjector: Loaded: RequireName={0}, Name={1}, Loaded={2}, Requesting={3}, Current={4}",
+                e.Name,
+                name,
+                assembly.FullName,
+                e.RequestingAssembly,
+                AppDomain.CurrentDomain));
+
             return assembly;
         }
     }
