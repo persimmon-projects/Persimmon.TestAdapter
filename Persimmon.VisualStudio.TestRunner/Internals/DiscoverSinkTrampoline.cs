@@ -31,9 +31,11 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                 parentSink_.ExtensionUri,
                 targetAssemblyPath_);
 
+            SymbolInformation symbol = args[3];
+
             testCase.DisplayName = args[1];
-            testCase.CodeFilePath = args[4];
-            testCase.LineNumber = args[5];
+            testCase.CodeFilePath = (symbol != null) ? symbol.FileName : null;
+            testCase.LineNumber = (symbol != null) ? symbol.MinLineNumber : 0;
 
             parentSink_.Progress(testCase);
         }

@@ -44,19 +44,21 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     parentSink_.ExtensionUri,
                     targetAssemblyPath_);
 
+                SymbolInformation symbol = args[2];
+
                 testCase.DisplayName = args[0];
-                testCase.CodeFilePath = args[3];
-                testCase.LineNumber = args[4];
+                testCase.CodeFilePath = (symbol != null) ? symbol.FileName : null;
+                testCase.LineNumber = (symbol != null) ? symbol.MinLineNumber : 0;
             }
 
             var testResult = new TestResult(testCase);
-            var exceptions = (Exception[])args[5];
+            var exceptions = (Exception[])args[3];
 
             // TODO: Other outcome require handled.
             //   Strategy: testCases_ included target test cases,
             //     so match and filter into Finished(), filtered test cases marking TestOutcome.Notfound.
             testResult.Outcome = (exceptions.Length >= 1) ? TestOutcome.Failed : TestOutcome.Passed;
-            testResult.Duration = args[6];
+            testResult.Duration = args[4];
 
             parentSink_.Progress(testResult);
         }

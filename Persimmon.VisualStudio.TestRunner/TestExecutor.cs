@@ -100,6 +100,7 @@ namespace Persimmon.VisualStudio.TestRunner
 
                 try
                 {
+#if false
                     // Create AssemblyInjector instance into new AppDomain.
                     var assemblyInjector = (AssemblyInjector)separatedAppDomain.CreateInstanceFromAndUnwrap(
                         testRunnerAssemblyPath_,
@@ -113,7 +114,7 @@ namespace Persimmon.VisualStudio.TestRunner
                         },
                         null,
                         null);
-
+#endif
                     // Create RemotableTestExecutor instance into new AppDomain,
                     //   and get remote reference.
                     var remoteExecutor = (RemotableTestExecutor)separatedAppDomain.CreateInstanceFromAndUnwrap(

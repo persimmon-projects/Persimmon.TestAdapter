@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Persimmon.VisualStudio.TestRunner.Internals
 {
@@ -104,47 +103,43 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                this.GetType().FullName,
                targetAssemblyPath));
 
-            using (var pdbReader = new PdbReader())
+            var pdbReader = new PdbReader();
+            pdbReader.TryRead(targetAssemblyPath);
+
+            // Callback delegate: testCase is ITestCase.
+            var callback = new Action<dynamic>(testCase =>
             {
-                pdbReader.Read(targetAssemblyPath);
+                MemberInfo member = testCase.DeclaredMember.Value;
+                var method = member as MethodInfo;
+                var property = member as PropertyInfo;
+                var type = (method != null) ? method.DeclaringType :
+                    (property != null) ? property.DeclaringType :
+                    null;
+                var memberName = (type != null) ?
+                    string.Format("{0}.{1}", type.FullName, member.Name) :
+                    member.Name;
 
-                // Callback delegate: testCase is ITestCase.
-                var callback = new Action<dynamic>(testCase =>
+                // If enable PdbReader, lookup debug information.
+                var symbol = pdbReader.GetSymbolInformation(memberName);
+
+                // Re-construct results by safe serializable type. (object array)
+                sinkTrampoline.Progress(new[]
                 {
-                    MemberInfo member = testCase.DeclaredMember.Value;
-                    var method = member as MethodInfo;
-                    var type = (method != null) ? method.DeclaringType : null;
-
-                    // If enable DiaSession, lookup debug information.
-                    DiaNavigationData navigationData = null;
-                    if ((method != null) && (type != null))
-                    {
-                        navigationData = pdbReader.GetNavigationData(
-                            type.FullName,
-                            method.Name);
-                    }
-
-                    // Re-construct results by safe serializable type. (object array)
-                    sinkTrampoline.Progress(new[]
-                    {
-                        testCase.FullName,
-                        testCase.FullName,  // TODO: Context-structual path
-                        (type != null) ? type.FullName : member.Name,
-                        (method != null) ? method.Name : member.Name,
-                        (navigationData != null) ? navigationData.FileName : null,
-                        (navigationData != null) ? navigationData.MinLineNumber : -1
-                    });
+                    testCase.FullName,
+                    testCase.FullName,  // TODO: Context-structual path
+                    memberName,
+                    symbol
                 });
+            });
 
-                this.InternalExecute(
-                    targetAssemblyPath,
-                    "Persimmon",
-                    "Persimmon.Internals.TestCollector",
-                    sinkTrampoline,
-                    (testCollector, testAssembly) => testCollector.CollectAndCallback(
-                        testAssembly,
-                        callback));
-            }
+            this.InternalExecute(
+                targetAssemblyPath,
+                "Persimmon",
+                "Persimmon.Internals.TestCollector",
+                sinkTrampoline,
+                (testCollector, testAssembly) => testCollector.CollectAndCallback(
+                    testAssembly,
+                    callback));
         }
 
         /// <summary>
@@ -165,51 +160,47 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             Debug.Assert(sinkTrampoline != null);
             Debug.Assert(token != null);
 
-            using (var pdbReader = new PdbReader())
+            var pdbReader = new PdbReader();
+            pdbReader.TryRead(targetAssemblyPath);
+
+            // Callback delegate: testResult is ITestResult.
+            var callback = new Action<dynamic>(testResult =>
             {
-                pdbReader.Read(targetAssemblyPath);
+                token.ThrowIfCancellationRequested();
 
-                // Callback delegate: testResult is ITestResult.
-                var callback = new Action<dynamic>(testResult =>
+                MemberInfo member = testResult.DeclaredMember;
+                var method = member as MethodInfo;
+                var property = member as PropertyInfo;
+                var type = (method != null) ? method.DeclaringType :
+                    (property != null) ? property.DeclaringType :
+                    null;
+                var memberName = (type != null) ?
+                    string.Format("{0}.{1}", type.FullName, member.Name) :
+                    member.Name;
+
+                // If enable PdbReader, lookup debug information.
+                var symbol = pdbReader.GetSymbolInformation(memberName);
+
+                // Re-construct results by safe serializable type. (object array)
+                sinkTrampoline.Progress(new[]
                 {
-                    token.ThrowIfCancellationRequested();
-
-                    MemberInfo member = testResult.DeclaredMember;
-                    var method = member as MethodInfo;
-                    var type = (method != null) ? method.DeclaringType : null;
-
-                    // If enable DiaSession, lookup debug information.
-                    DiaNavigationData navigationData = null;
-                    if ((method != null) && (type != null))
-                    {
-                        navigationData = pdbReader.GetNavigationData(
-                            type.FullName,
-                            method.Name);
-                    }
-
-                    // Re-construct results by safe serializable type. (object array)
-                    sinkTrampoline.Progress(new[]
-                    {
-                        testResult.FullName,
-                        (type != null) ? type.FullName : member.Name,
-                        (method != null) ? method.Name : member.Name,
-                        (navigationData != null) ? navigationData.FileName : null,
-                        (navigationData != null) ? navigationData.MinLineNumber : -1,
-                        testResult.Exceptions, // TODO: exn may failed serialize. try convert safe types...
-                        testResult.Duration
-                    });
+                    testResult.FullName,
+                    memberName,
+                    symbol,
+                    testResult.Exceptions, // TODO: exn may failed serialize. try convert safe types...
+                    testResult.Duration
                 });
+            });
 
-                this.InternalExecute(
-                    targetAssemblyPath,
-                    "Persimmon",
-                    "Persimmon.Internals.TestRunner",
-                    sinkTrampoline,
-                    (testRunner, testAssembly) => testRunner.RunTestsAndCallback(
-                        testAssembly,
-                        fullyQualifiedTestNames,
-                        callback));
-            }
+            this.InternalExecute(
+                targetAssemblyPath,
+                "Persimmon",
+                "Persimmon.Internals.TestRunner",
+                sinkTrampoline,
+                (testRunner, testAssembly) => testRunner.RunTestsAndCallback(
+                    testAssembly,
+                    fullyQualifiedTestNames,
+                    callback));
         }
 
         /// <summary>

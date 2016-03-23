@@ -61,10 +61,18 @@ namespace Persimmon.VisualStudio.TestExplorer
                 var sink = new TestDiscoverySink(discoveryContext, logger, discoverySink);
 
                 // Discover must synch execute.
+#if DEBUG
+                foreach (var task in sources.Select(
+                    targetAssemblyPath => testExecutor.DiscoverAsync(targetAssemblyPath, sink)))
+                {
+                    task.Wait();
+                }
+#else
                 var task = Task.WhenAll(sources.Select(
                     targetAssemblyPath => testExecutor.DiscoverAsync(targetAssemblyPath, sink)));
 
                 task.Wait();
+#endif
             }
             catch (Exception ex)
             {
