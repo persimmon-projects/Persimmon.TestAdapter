@@ -109,6 +109,8 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             // Callback delegate: testCase is ITestCase.
             var callback = new Action<dynamic>(testCase =>
             {
+                string fullName = testCase.FullName;
+
                 MemberInfo member = testCase.DeclaredMember.Value;
                 var method = member as MethodInfo;
                 var property = member as PropertyInfo;
@@ -123,10 +125,10 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                 var symbol = (SymbolInformation)null; //pdbReader.GetSymbolInformation(memberName);
 
                 // Re-construct results by safe serializable type. (object array)
-                sinkTrampoline.Progress(new[]
+                sinkTrampoline.Progress(new dynamic[]
                 {
-                    testCase.FullName,
-                    testCase.FullName,  // TODO: Context-structual path
+                    fullName,
+                    fullName,  // TODO: Context-structual path
                     memberName,
                     symbol
                 });
@@ -168,6 +170,8 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             {
                 token.ThrowIfCancellationRequested();
 
+                string fullName = testResult.FullName;
+
                 MemberInfo member = testResult.DeclaredMember;
                 var method = member as MethodInfo;
                 var property = member as PropertyInfo;
@@ -184,7 +188,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                 // Re-construct results by safe serializable type. (object array)
                 sinkTrampoline.Progress(new[]
                 {
-                    testResult.FullName,
+                    fullName,
                     memberName,
                     symbol,
                     testResult.Exceptions, // TODO: exn may failed serialize. try convert safe types...

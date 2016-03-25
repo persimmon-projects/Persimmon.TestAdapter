@@ -26,7 +26,7 @@ type Discoverer () =
     let fsprojPath = traverseFsproj targetAssemblyPath
     let checker = FSharpChecker.Create()
     let projOptions = ProjectCracker.GetProjectOptionsFromProjectFile fsprojPath
-    let! results = checker.ParseAndCheckProject projOptions
+    let! results = checker.ParseFileInProject projOptions
     let! allUses = results.GetAllUsesOfAllSymbols()
     return allUses |> Seq.map (fun symbol -> symbol.) |> Seq.toArray
   }
