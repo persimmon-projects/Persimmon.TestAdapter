@@ -103,8 +103,8 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                this.GetType().FullName,
                targetAssemblyPath));
 
-            var pdbReader = new PdbReader();
-            pdbReader.TryRead(targetAssemblyPath);
+            //var pdbReader = new PdbReader();
+            //pdbReader.TryRead(targetAssemblyPath);
 
             // Callback delegate: testCase is ITestCase.
             var callback = new Action<dynamic>(testCase =>
@@ -120,7 +120,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     member.Name;
 
                 // If enable PdbReader, lookup debug information.
-                var symbol = pdbReader.GetSymbolInformation(memberName);
+                var symbol = (SymbolInformation)null; //pdbReader.GetSymbolInformation(memberName);
 
                 // Re-construct results by safe serializable type. (object array)
                 sinkTrampoline.Progress(new[]
@@ -160,8 +160,8 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             Debug.Assert(sinkTrampoline != null);
             Debug.Assert(token != null);
 
-            var pdbReader = new PdbReader();
-            pdbReader.TryRead(targetAssemblyPath);
+            //var pdbReader = new PdbReader();
+            //pdbReader.TryRead(targetAssemblyPath);
 
             // Callback delegate: testResult is ITestResult.
             var callback = new Action<dynamic>(testResult =>
@@ -179,7 +179,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     member.Name;
 
                 // If enable PdbReader, lookup debug information.
-                var symbol = pdbReader.GetSymbolInformation(memberName);
+                var symbol = (SymbolInformation) null; //pdbReader.GetSymbolInformation(memberName);
 
                 // Re-construct results by safe serializable type. (object array)
                 sinkTrampoline.Progress(new[]

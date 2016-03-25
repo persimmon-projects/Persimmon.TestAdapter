@@ -39,11 +39,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="msdia120typelib_clr0200, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>C:\Program Files (x86)\Microsoft Visual Studio 12.0\Common7\IDE\CommonExtensions\Microsoft\TestWindow\msdia120typelib_clr0200.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="Microsoft.VisualStudio.TestPlatform.ObjectModel">
       <SpecificVersion>False</SpecificVersion>
@@ -56,9 +51,9 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Internals\AssemblyInjector.cs" />
+    <Compile Include="Internals\IDiscoverer.cs" />
     <Compile Include="Internals\ISinkTrampoline.cs" />
     <Compile Include="Internals\DiscoverSinkTrampoline.cs" />
-    <Compile Include="Internals\PdbReader.cs" />
     <Compile Include="Internals\RemoteCancellationToken.cs" />
     <Compile Include="Internals\RunSinkTrampoline.cs" />
     <Compile Include="Internals\SymbolInformation.cs" />
