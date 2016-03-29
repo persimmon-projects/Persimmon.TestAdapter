@@ -3,162 +3,195 @@
 open System
 open System.IO
 open Microsoft.FSharp.Compiler.Ast
+open Microsoft.FSharp.Compiler.Range
 open Microsoft.FSharp.Compiler.SourceCodeServices
 
 open Persimmon.VisualStudio.TestRunner.Internals
 
+//////////////////////////////////////////////////////////
+// Private AST visitor implementation
+
 module private DiscovererImpl =
 
-    let rec visitPattern (indent: string) pat = seq {
+    [<Sealed>]
+    type DiscoverContext private (symbolNames: string[], range: range) =
+        new() = DiscoverContext([||], range())
+        member __.Indent =
+            symbolNames |> Seq.map (fun _ -> String.Empty) |> String.concat "  "
+        member __.Nest(name: string, range) =
+            DiscoverContext([name] |> (Seq.append symbolNames) |> Seq.toArray, range)
+        member __.ToSymbolInformation() =
+            SymbolInformation(symbolNames |> String.concat ".", range.FileName, range.StartLine, range.EndLine)
+
+    let rec visitPattern (context: DiscoverContext) pat : SymbolInformation seq = seq {
         match pat with
-        | SynPat.Wild(_) -> 
-            printfn "%sUnderscore" indent
+//        | SynPat.Wild(range) -> 
+//            let nest = context.Nest("_", range)
+//            yield nest.ToSymbolInformation()
+//            //printfn "%sUnderscore" context.Indent
         | SynPat.Named(pat, name, _, _, _) ->
-            yield! visitPattern (indent + "  ") pat
-            printfn "%sNamed: '%s'" indent name.idText
-        | SynPat.LongIdent(LongIdentWithDots(ident, _), _, _, _, _, _) ->
+            let nest = context.Nest(name.idText, name.idRange)
+            yield! visitPattern nest pat
+            yield nest.ToSymbolInformation()
+            //printfn "%sNamed: '%s'" context.Indent name.idText
+        | SynPat.LongIdent(LongIdentWithDots(ident, _), _, _, _, _, range) ->
             let names = String.concat "." [ for i in ident -> i.idText ]
-            printfn "%sLongIdent: %s" indent names
-//        | pat -> printfn "%sその他のパターン: %A" pat
+            let nest = context.Nest(names, range)
+            yield nest.ToSymbolInformation()
+            //printfn "%sLongIdent: %s" context.Indent names
+//        | pat -> printfn "%sその他のパターン: %A" context.Indent pat
         | _ -> ()
     }
 
-    let visitSimplePatterns (indent: string) pats = seq {
+    let visitSimplePatterns (context: DiscoverContext) pats : SymbolInformation seq = seq {
         match pats with
         | SynSimplePats.SimplePats(simplepats, _) ->
             for pat in simplepats do
                 match pat with
-                | SynSimplePat.Id(ident, _, _, _, _, _) ->
-                    printfn "%sSimplePat.Id: '%s'" indent ident.idText
+                | SynSimplePat.Id(ident, _, _, _, _, range) ->
+                    let nest = context.Nest(ident.idText, range)
+                    yield nest.ToSymbolInformation()
+                    //printfn "%sSimplePat.Id: '%s'" context.Indent ident.idText
                 | _ -> ()
         | _ -> ()
     }
 
-    let visitConst (indent: string) value = seq {
+    let visitConst (context: DiscoverContext) value : SymbolInformation seq = seq {
         match value with
-        | SynConst.String(str, _) ->
-            printfn "%sString: \"%s\"" indent str
+        | SynConst.String(str, range) ->
+            let nest = context.Nest(str, range)
+            yield nest.ToSymbolInformation()
+            //printfn "%sString: \"%s\"" context.Indent str
         | _ -> ()
     }
 
-    let rec visitExpression (indent: string) expr = seq {
+    let rec visitExpression (context: DiscoverContext) expr : SymbolInformation seq = seq {
         match expr with
         // tests6
         | SynExpr.LetOrUse(_, _, bindings, body, _) ->
-            printfn "%sLetOrUse (Expr):" indent
+            //printfn "%sLetOrUse (Expr):" context.Indent
             for binding in bindings do
-            let (Binding(access, kind, inlin, mutabl, attrs, xmlDoc, 
-                            data, pat, retInfo, init, m, sp)) = binding
-            yield! visitPattern (indent + "  ") pat
-            yield! visitExpression (indent + "  ") init
-            printfn "%sLetOrUse (Body):" indent
-            yield! visitExpression (indent + "  ") body
+                let (Binding(access, kind, inlin, mutabl, attrs, xmlDoc, 
+                                data, pat, retInfo, init, m, sp)) = binding
+                yield! visitPattern context pat
+                yield! visitExpression context init
+            //printfn "%sLetOrUse (Body):" context.Indent
+            yield! visitExpression context body
         | SynExpr.App(_, _, expr0, expr1, _) ->
-            printfn "%sApp (Expr0):" indent
-            yield! visitExpression (indent + "  ") expr0
-            printfn "%sApp (Expr1):" indent
-            yield! visitExpression (indent + "  ") expr1
+            //printfn "%sApp (Expr0):" context.Indent
+            yield! visitExpression context expr0
+            //printfn "%sApp (Expr1):" context.Indent
+            yield! visitExpression context expr1
         // test
         | SynExpr.Ident id ->
-            printfn "%sIdent: %A" indent id
+            //printfn "%sIdent: %A" context.Indent id
+            let nest = context.Nest(id.idText, id.idRange)
+            yield nest.ToSymbolInformation()
         // 'hogehoge'
         | SynExpr.Const(c, _) ->
-            printfn "%sConst:" indent
-            yield! visitConst (indent + "  ") c
+            //printfn "%sConst:" context.Indent
+            yield! visitConst context c
         // tests, tests2, tests32
         | SynExpr.ArrayOrListOfSeqExpr(_, expr, _) ->
-            printfn "%sArrayOrListOfSeqExpr:" indent
-            yield! visitExpression (indent + "  ") expr
+            //printfn "%sArrayOrListOfSeqExpr:" context.Indent
+            yield! visitExpression context expr
         | SynExpr.CompExpr(_, _, expr, _) ->
-            printfn "%sCompExpr:" indent
-            yield! visitExpression (indent + "  ") expr
-        | SynExpr.Sequential(info, _, expr0, expr1, _) ->
-            printfn "%sSequential: %A" indent info
-            let indent1 = indent + "  "
-            printfn "%s[0]:" indent1
-            yield! visitExpression (indent1 + "  ") expr0
-            printfn "%s[1]:" indent1
-            yield! visitExpression (indent1 + "  ") expr1
+            //printfn "%sCompExpr:" context.Indent
+            yield! visitExpression context expr
+        | SynExpr.Sequential(info, _, expr0, expr1, range) ->
+            //printfn "%sSequential: %A" context.Indent info
+            let nest0 = context.Nest("[0]", expr0.Range)
+            //printfn "%s[0]:" indent1
+            yield! visitExpression nest0 expr0
+            let nest1 = context.Nest("[1]", expr1.Range)
+            //printfn "%s[1]:" indent1
+            yield! visitExpression nest1 expr1
         // tests3, tests32
         | SynExpr.YieldOrReturn(_, expr, _) ->
-            printfn "%sYieldOrReturn:" indent
-            yield! visitExpression (indent + "  ") expr
+            //printfn "%sYieldOrReturn:" context.Indent
+            yield! visitExpression context expr
         // tests5
         | SynExpr.Paren(expr, _, _, _) ->
-            printfn "%sParen:" indent
-            yield! visitExpression (indent + "  ") expr
+            //printfn "%sParen:" context.Indent
+            yield! visitExpression context expr
         // tests5
         | SynExpr.Lambda(_, _, pats, expr, _) ->
-            printfn "%sLambda:" indent
-            yield! visitSimplePatterns (indent + "  ") pats
-            yield! visitExpression (indent + "  ") expr
-//        | expr -> printfn "%sサポート対象外の式: %A" indent expr
+            //printfn "%sLambda:" context.Indent
+            yield! visitSimplePatterns context pats
+            yield! visitExpression context expr
+//        | expr -> printfn "%sサポート対象外の式: %A" context.Indent expr
         | _ -> ()
     }
 
-    let visitBinding (indent: string) binding = seq {
+    let visitBinding (context: DiscoverContext) binding : SymbolInformation seq = seq {
         let (Binding(access, kind, inlin, mutabl, attrs, xmlDoc, 
                     data, pat, retInfo, body, m, sp)) = binding
-        yield! visitPattern indent pat
-        yield! visitExpression indent body
+        yield! visitPattern context pat
+        yield! visitExpression context body
     }
 
-    let visitBindings (indent: string) bindings = seq {
+    let visitBindings (context: DiscoverContext) bindings : SymbolInformation seq = seq {
         for binding in bindings do
-            yield! visitBinding indent binding
+            yield! visitBinding context binding
     }
 
-    let visitTypeDefine (indent: string) typeDefine = seq {
+    let visitTypeDefine (context: DiscoverContext) typeDefine : SymbolInformation seq = seq {
         match typeDefine with
         | SynTypeDefn.TypeDefn(
                               SynComponentInfo.ComponentInfo(_, args, _, ident, _, _, _, _),
                               SynTypeDefnRepr.ObjectModel(kind, members, _),
                               _, _) ->
             let names = String.concat "." [ for i in ident -> i.idText ]
-            printfn "%sTypeDefn: %s" indent names
+            //printfn "%sTypeDefn: %s" context.Indent names
             for memberDefine in members do
                 match memberDefine with
                 | SynMemberDefn.LetBindings(bindings, _, _, _) ->
-                    printfn "%sType Let:" indent
-                    yield! visitBindings (indent + "  ") bindings
+                    //printfn "%sType Let:" context.Indent
+                    yield! visitBindings context bindings
                 | SynMemberDefn.Member(binding, _) ->
-                    printfn "%sType Member:" indent
-                    yield! visitBinding (indent + "  ") binding
+                    //printfn "%sType Member:" context.Indent
+                    yield! visitBinding context binding
                 | _ -> ()
         | _ -> ()
     }
 
-    let visitDeclarations (indent: string) decls = seq {
+    let visitDeclarations (context: DiscoverContext) decls : SymbolInformation seq = seq {
         for declaration in decls do
             match declaration with
             // Basic module's binding
             | SynModuleDecl.Let(isRec, bindings, range) ->
-                printfn "%sModule Let:" indent
-                yield! visitBindings (indent + "  ") bindings
+                //printfn "%sModule Let:" context.Indent
+                yield! visitBindings context bindings
             // MyClass
             | SynModuleDecl.Types(typeDefines, _) ->
-                printfn "%sModule Types:" indent
+                //printfn "%sModule Types:" context.Indent
                 for typeDefine in typeDefines do
-                    yield! visitTypeDefine (indent + "  ") typeDefine
-//            | _ -> printfn "%sサポート対象外の宣言: %A" indent declaration
+                    yield! visitTypeDefine context typeDefine
+//            | _ -> printfn "%sサポート対象外の宣言: %A" context.Indent declaration
             | _ -> ()
     }
 
-    let visitModulesAndNamespaces (indent: string) modulesOrNss = seq {
+    let visitModulesAndNamespaces (context: DiscoverContext) modulesOrNss : SymbolInformation seq = seq {
         for moduleOrNs in modulesOrNss do
-            let (SynModuleOrNamespace(lid, isMod, decls, xml, attrs, _, m)) = moduleOrNs
-            printfn "%sModuleOrNamespace: %A" indent lid
-            yield! visitDeclarations "  " decls
+            let (SynModuleOrNamespace(lid, isMod, decls, xml, attrs, _, range)) = moduleOrNs
+            //printfn "%sModuleOrNamespace: %A" context.Indent lid
+            let names = String.concat "." [ for i in lid -> i.idText ]
+            let nest = context.Nest(names, range)
+            yield! visitDeclarations nest decls
     }
 
-    let visitResults (results: FSharpParseFileResults) = seq {
+    let visitResults (results: FSharpParseFileResults) : SymbolInformation seq = seq {
         match results.ParseTree.Value with
         | ParsedInput.ImplFile(implFile) ->
             // 宣言を展開してそれぞれを走査する
             let (ParsedImplFileInput(fn, script, name, _, _, modules, _)) = implFile
-            yield! visitModulesAndNamespaces "" modules
+            let context = DiscoverContext()
+            yield! visitModulesAndNamespaces context modules
         | _ -> failwith "F# インターフェイスファイル (*.fsi) は未サポートです。"
     }
+
+//////////////////////////////////////////////////////////
+// Public (MBR) interface
 
 [<Sealed>]
 type Discoverer () =
@@ -177,14 +210,14 @@ type Discoverer () =
     let fsprojName = (Path.GetFileNameWithoutExtension assemblyPath) + ".fsproj"
     traverseFsprojRecursive basePath fsprojName
 
-  let asyncParseCode projOptions path = async {
+  let asyncParseCode projOptions path : Async<SymbolInformation[]> = async {
     let checker = FSharpChecker.Create()
     let sourceCodeText = File.ReadAllText(path)
     let! results = checker.ParseFileInProject(path, sourceCodeText, projOptions)
     return DiscovererImpl.visitResults results |> Seq.toArray
   }
 
-  let asyncParseCodes projOptions = async {
+  let asyncParseCodes projOptions : Async<SymbolInformation[]> = async {
     let! results =
       projOptions.OtherOptions |>
       Seq.filter (fun opt -> opt.StartsWith("--") = false) |>
