@@ -220,17 +220,23 @@ type Discoverer () =
     }
 
     let asyncParseCodes projOptions : Async<SymbolInformation[]> = async {
+        // TODO: ProjectCracker cannot retrieve source code file paths,
+        //   try improvement ProjectCracker and send PR? :)
         let! results =
             projOptions.OtherOptions |>
-            Seq.filter (fun opt -> opt.StartsWith("--") = false) |>
+            Seq.filter (fun opt -> opt.StartsWith("-") = false) |>
             Seq.map (fun path -> asyncParseCode projOptions path) |>
             Async.Parallel
         return results |> Seq.collect (fun result -> result) |> Seq.toArray
     }
 
     member __.AsyncDiscover targetAssemblyPath : Async<SymbolInformation[]> =
+        let codebase = Path.GetDirectoryName(Uri(typeof<ProjectCracker>.Assembly.CodeBase).LocalPath)
+        let location = Path.GetDirectoryName(typeof<ProjectCracker>.Assembly.Location)
+
         let fsprojPath = traverseFsproj targetAssemblyPath
         let projOptions = ProjectCracker.GetProjectOptionsFromProjectFile fsprojPath
+
         asyncParseCodes projOptions
 
     interface IDiscoverer with

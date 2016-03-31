@@ -17,9 +17,10 @@ namespace Persimmon.VisualStudio.TestRunner
     /// </summary>
     public sealed class TestExecutor
     {
-        private static readonly Type assemblyInjectorType_ = typeof(AssemblyInjector);
-        private static readonly Type remotableExecutorType_ = typeof(RemotableTestExecutor);
-        private static readonly string testRunnerAssemblyPath_ = remotableExecutorType_.Assembly.Location;
+        private readonly string testRunnerAssemblyPath_;
+        private readonly string testDiscovererPath_;
+        private static readonly string testDiscovererTypeName_ =
+            "Persimmon.VisualStudio.TestDiscoverer.Discoverer";
 
         /// <summary>
         /// Constructor.
@@ -27,18 +28,35 @@ namespace Persimmon.VisualStudio.TestRunner
         public TestExecutor()
         {
             Debug.Assert(this.GetType().Assembly.GlobalAssemblyCache);
+
+            var callerAssembly = Assembly.GetCallingAssembly();
+
+            testRunnerAssemblyPath_ = this.GetType().Assembly.Location;
+            testDiscovererPath_ = Path.Combine(
+                Path.GetDirectoryName(callerAssembly.Location),
+                "Persimmon.VisualStudio.TestDiscoverer.dll");
         }
 
         /// <summary>
         /// Test execute target assembly.
         /// </summary>
+        /// <typeparam name="T">Target instance castable type (MBR or interface)</typeparam>
+        /// <typeparam name="U">Result type</typeparam>
         /// <param name="targetAssemblyPath">Target assembly path</param>
+        /// <param name="targetClassName">Targe class name (MBR derived)</param>
+        /// <param name="applicationBasePath">AppDomain's base path</param>
         /// <param name="action">Action</param>
-        private Task InternalExecuteAsync(
+        /// <returns>Result</returns>
+        private Task<U> InternalExecuteAsync<T, U>(
             string targetAssemblyPath,
-            Action<RemotableTestExecutor> action)
+            string targetClassName,
+            string applicationBasePath,
+            Func<T, U> action)
+            where T : class
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(targetAssemblyPath));
+            Debug.Assert(!string.IsNullOrWhiteSpace(targetClassName));
+            Debug.Assert(!string.IsNullOrWhiteSpace(applicationBasePath));
             Debug.Assert(action != null);
 
             return Task.Run(() =>
@@ -46,22 +64,21 @@ namespace Persimmon.VisualStudio.TestRunner
                 // Strategy: Shadow copy information:
                 //   https://msdn.microsoft.com/en-us/library/ms404279%28v=vs.110%29.aspx
 
+                // ApplicationBasePath: Important:
+                //   Change from current AppDomain.ApplicationBase,
+                //   may be stable execution test assemblies.
+
                 // Execution context id (for diagnose).
                 var contextId = Guid.NewGuid();
-
-                // ApplicationBase path.
-                // Important: Change from current AppDomain.ApplicationBase,
-                //   may be stable execution test assemblies.
-                var applicationBasePath = Path.GetDirectoryName(targetAssemblyPath);
 
                 // Shadow copy target paths.
                 var shadowCopyTargets = string.Join(
                     ";",
                     new[]
-                {
-                    applicationBasePath,
-                    Path.GetDirectoryName(testRunnerAssemblyPath_)
-                });
+                    {
+                        Path.GetDirectoryName(targetAssemblyPath),
+                        applicationBasePath
+                    }.Distinct());
 
                 // AppDomain name.
                 var separatedAppDomainName = string.Format(
@@ -100,31 +117,16 @@ namespace Persimmon.VisualStudio.TestRunner
 
                 try
                 {
-#if false
-                    // Create AssemblyInjector instance into new AppDomain.
-                    var assemblyInjector = (AssemblyInjector)separatedAppDomain.CreateInstanceFromAndUnwrap(
-                        testRunnerAssemblyPath_,
-                        assemblyInjectorType_.FullName,
-                        false,
-                        BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-                        null,
-                        new object[]
-                        {
-                            AppDomain.CurrentDomain.GetAssemblies().Select(assembly => assembly.GetName()).ToArray()
-                        },
-                        null,
-                        null);
-#endif
-                    // Create RemotableTestExecutor instance into new AppDomain,
+                    // Create remote object (MBR) instance into new AppDomain,
                     //   and get remote reference.
-                    var remoteExecutor = (RemotableTestExecutor)separatedAppDomain.CreateInstanceFromAndUnwrap(
-                        testRunnerAssemblyPath_,
-                        remotableExecutorType_.FullName);
+                    var targetInstance = (T)separatedAppDomain.CreateInstanceFromAndUnwrap(
+                        targetAssemblyPath,
+                        targetClassName);
 
                     ///////////////////////////////////////////////////////////////////////////////////////////
                     // Execute via remote AppDomain
 
-                    action(remoteExecutor);
+                    return action(targetInstance);
                 }
                 finally
                 {
@@ -139,18 +141,32 @@ namespace Persimmon.VisualStudio.TestRunner
         /// </summary>
         /// <param name="targetAssemblyPath">Target assembly path</param>
         /// <param name="sink">Execution logger interface</param>
-        public Task DiscoverAsync(
+        public async Task DiscoverAsync(
             string targetAssemblyPath,
             ITestDiscoverSink sink)
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(targetAssemblyPath));
             Debug.Assert(sink != null);
 
-            return this.InternalExecuteAsync(
-                targetAssemblyPath,
-                executor => executor.Discover(
-                    targetAssemblyPath,
-                    new DiscoverSinkTrampoline(targetAssemblyPath, sink)));
+            // Step1: Parse F# source code and discover AST tree, retreive symbol informations.
+            var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
+                testDiscovererPath_,
+                testDiscovererTypeName_,
+                Path.GetDirectoryName(testDiscovererPath_),
+                discoverer => discoverer.Discover(targetAssemblyPath));
+
+            // Step2: Traverse target test assembly, retreive test cases and push to Visual Studio.
+            await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
+                testRunnerAssemblyPath_,
+                typeof(RemotableTestExecutor).FullName,
+                Path.GetDirectoryName(targetAssemblyPath),
+                executor =>
+                {
+                    executor.Discover(
+                        targetAssemblyPath,
+                        new DiscoverSinkTrampoline(targetAssemblyPath, sink));
+                    return true;
+                });
         }
 
         /// <summary>
@@ -160,7 +176,7 @@ namespace Persimmon.VisualStudio.TestRunner
         /// <param name="testCases">Target test cases.</param>
         /// <param name="sink">Execution logger interface</param>
         /// <param name="token">CancellationToken</param>
-        public Task RunAsync(
+        public async Task RunAsync(
             string targetAssemblyPath,
             ICollection<TestCase> testCases,
             ITestRunSink sink,
@@ -174,13 +190,19 @@ namespace Persimmon.VisualStudio.TestRunner
             var fullyQualifiedTestNames = testCases.Select(testCase => testCase.FullyQualifiedName).ToArray();
             var testCaseDicts = testCases.ToDictionary(testCase => testCase.FullyQualifiedName);
 
-            return this.InternalExecuteAsync(
-                targetAssemblyPath,
-                executor => executor.Run(
-                    targetAssemblyPath,
-                    fullyQualifiedTestNames,
-                    new RunSinkTrampoline(targetAssemblyPath, sink, testCaseDicts),
-                    token));
+            await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
+                testRunnerAssemblyPath_,
+                typeof(RemotableTestExecutor).FullName,
+                Path.GetDirectoryName(targetAssemblyPath),
+                executor =>
+                {
+                    executor.Run(
+                        targetAssemblyPath,
+                        fullyQualifiedTestNames,
+                        new RunSinkTrampoline(targetAssemblyPath, sink, testCaseDicts),
+                        token);
+                    return true;
+                });
         }
     }
 }

@@ -50,7 +50,6 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Internals\AssemblyInjector.cs" />
     <Compile Include="Internals\IDiscoverer.cs" />
     <Compile Include="Internals\ISinkTrampoline.cs" />
     <Compile Include="Internals\DiscoverSinkTrampoline.cs" />

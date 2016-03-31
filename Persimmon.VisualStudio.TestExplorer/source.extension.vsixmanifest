@@ -22,5 +22,8 @@
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
     <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="Persimmon.VisualStudio.TestRunner" Path="|Persimmon.VisualStudio.TestRunner|" AssemblyName="|Persimmon.VisualStudio.TestRunner;AssemblyName|" />
     <Asset Type="Application Settings Configuration file" d:Source="File" Path="Persimmon.VisualStudio.TestExplorer.dll.config" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="Persimmon.VisualStudio.TestDiscoverer" Path="|Persimmon.VisualStudio.TestDiscoverer|" AssemblyName="|Persimmon.VisualStudio.TestDiscoverer;AssemblyName|" />
+    <Asset d:Source="File" Path="bin\Debug\FSharp.Compiler.Service.ProjectCrackerTool.exe" Type="Microsoft.VisualStudio.Samples" />
+    <Asset d:Source="File" Path="bin\Debug\FSharp.Compiler.Service.ProjectCrackerTool.exe.config" Type="Microsoft.VisualStudio.Samples" />
   </Assets>
 </PackageManifest>

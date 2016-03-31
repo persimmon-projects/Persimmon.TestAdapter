@@ -37,7 +37,7 @@
     <DocumentationFile>bin\Release\Persimmon.VisualStudio.TestDiscoverer.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Persimmon.VisualStudio.TestExplorer.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
