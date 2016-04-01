@@ -155,6 +155,10 @@ namespace Persimmon.VisualStudio.TestRunner
                 Path.GetDirectoryName(testDiscovererPath_),
                 discoverer => discoverer.Discover(targetAssemblyPath));
 
+            var symbolDictionary = symbols.
+                GroupBy(symbol => symbol.SymbolName).
+                ToDictionary(g => g.Key, g => g.First());
+
             // Step2: Traverse target test assembly, retreive test cases and push to Visual Studio.
             await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
                 testRunnerAssemblyPath_,
@@ -164,7 +168,7 @@ namespace Persimmon.VisualStudio.TestRunner
                 {
                     executor.Discover(
                         targetAssemblyPath,
-                        new DiscoverSinkTrampoline(targetAssemblyPath, sink));
+                        new DiscoverSinkTrampoline(targetAssemblyPath, sink, symbolDictionary));
                     return true;
                 });
         }
