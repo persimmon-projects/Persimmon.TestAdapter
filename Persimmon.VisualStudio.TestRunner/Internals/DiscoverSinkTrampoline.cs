@@ -33,11 +33,13 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
         {
             string fullyQualifiedTestName = args[0];
             string symbolName = args[1];
+            string displayName = args[2];
 
             var testCase = new TestCase(
                 fullyQualifiedTestName,
                 parentSink_.ExtensionUri,
                 targetAssemblyPath_);
+            testCase.DisplayName = displayName;
 
             SymbolInformation symbol;
             symbolInformations_.TryGetValue(symbolName, out symbol);

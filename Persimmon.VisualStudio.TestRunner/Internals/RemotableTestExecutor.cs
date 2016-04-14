@@ -108,12 +108,14 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             {
                 string fullyQualifiedTestName = testCase.UniqueName;
                 string symbolName = testCase.SymbolName;
+                string displayName = testCase.DisplayName;
 
                 // Re-construct results by safe serializable type. (object array)
                 sinkTrampoline.Progress(new dynamic[]
                 {
                     fullyQualifiedTestName,
-                    symbolName
+                    symbolName,
+                    displayName
                 });
             });
 
@@ -152,12 +154,14 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
 
                 string fullyQualifiedTestName = testResult.TestCase.UniqueName;
                 string symbolName = testResult.TestCase.SymbolName;
+                string displayName = testResult.TestCase.DisplayName;
 
                 // Re-construct results by safe serializable type. (object array)
                 sinkTrampoline.Progress(new[]
                 {
                     fullyQualifiedTestName,
                     symbolName,
+                    displayName,
                     testResult.Exceptions, // TODO: exn may failed serialize. try convert safe types...
                     testResult.Duration
                 });

@@ -35,8 +35,9 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
         {
             string fullyQualifiedTestName = args[0];
             string symbolName = args[1];
-            Exception[] exceptions = args[2];
-            TimeSpan duration = args[3];
+            string displayName = args[2];
+            Exception[] exceptions = args[3];
+            TimeSpan duration = args[4];
 
             TestCase testCase;
             if (testCases_.TryGetValue(fullyQualifiedTestName, out testCase) == false)
@@ -47,6 +48,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     fullyQualifiedTestName,
                     parentSink_.ExtensionUri,
                     targetAssemblyPath_);
+                testCase.DisplayName = displayName;
 
                 testCase.DisplayName = fullyQualifiedTestName;
             }
