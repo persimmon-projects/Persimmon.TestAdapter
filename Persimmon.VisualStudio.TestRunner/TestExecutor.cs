@@ -42,21 +42,21 @@ namespace Persimmon.VisualStudio.TestRunner
         /// </summary>
         /// <typeparam name="T">Target instance castable type (MBR or interface)</typeparam>
         /// <typeparam name="U">Result type</typeparam>
-        /// <param name="targetAssemblyPath">Target assembly path</param>
-        /// <param name="targetClassName">Targe class name (MBR derived)</param>
-        /// <param name="applicationBasePath">AppDomain's base path</param>
+        /// <param name="targetAssemblyPath">Target instantiate assembly path</param>
+        /// <param name="targetClassName">Targe instantiate class name (MBR derived)</param>
+        /// <param name="applicationAssemblyPath">Target application assembly path (Inclusive in ApplicationBase path)</param>
         /// <param name="action">Action</param>
         /// <returns>Result</returns>
         private Task<U> InternalExecuteAsync<T, U>(
             string targetAssemblyPath,
             string targetClassName,
-            string applicationBasePath,
+            string applicationAssemblyPath,
             Func<T, U> action)
             where T : class
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(targetAssemblyPath));
             Debug.Assert(!string.IsNullOrWhiteSpace(targetClassName));
-            Debug.Assert(!string.IsNullOrWhiteSpace(applicationBasePath));
+            Debug.Assert(!string.IsNullOrWhiteSpace(applicationAssemblyPath));
             Debug.Assert(action != null);
 
             return Task.Run(() =>
@@ -70,6 +70,8 @@ namespace Persimmon.VisualStudio.TestRunner
 
                 // Execution context id (for diagnose).
                 var contextId = Guid.NewGuid();
+
+                var applicationBasePath = Path.GetDirectoryName(applicationAssemblyPath);
 
                 // Shadow copy target paths.
                 var shadowCopyTargets = string.Join(
@@ -96,7 +98,7 @@ namespace Persimmon.VisualStudio.TestRunner
                 };
 
                 // If test assembly has configuration file, try to set.
-                var configurationFilePath = targetAssemblyPath + ".config";
+                var configurationFilePath = applicationAssemblyPath + ".config";
                 if (File.Exists(configurationFilePath))
                 {
                     Debug.WriteLine(string.Format(
@@ -152,7 +154,7 @@ namespace Persimmon.VisualStudio.TestRunner
             var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
                 testDiscovererPath_,
                 testDiscovererTypeName_,
-                Path.GetDirectoryName(testDiscovererPath_),
+                testDiscovererPath_,
                 discoverer => discoverer.Discover(targetAssemblyPath));
 
             var symbolDictionary = symbols.
@@ -163,7 +165,7 @@ namespace Persimmon.VisualStudio.TestRunner
             await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
                 testRunnerAssemblyPath_,
                 typeof(RemotableTestExecutor).FullName,
-                Path.GetDirectoryName(targetAssemblyPath),
+                targetAssemblyPath,
                 executor =>
                 {
                     executor.Discover(
@@ -197,7 +199,7 @@ namespace Persimmon.VisualStudio.TestRunner
             await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
                 testRunnerAssemblyPath_,
                 typeof(RemotableTestExecutor).FullName,
-                Path.GetDirectoryName(targetAssemblyPath),
+                targetAssemblyPath,
                 executor =>
                 {
                     executor.Run(

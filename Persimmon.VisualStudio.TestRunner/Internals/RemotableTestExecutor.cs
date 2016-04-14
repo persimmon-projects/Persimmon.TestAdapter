@@ -106,8 +106,8 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             // Callback delegate: testCase is ITestCase.
             var callback = new Action<dynamic>(testCase =>
             {
-                string fullyQualifiedTestName = testCase.FullName;
-                string symbolName = testCase.Name;
+                string fullyQualifiedTestName = testCase.UniqueName;
+                string symbolName = testCase.SymbolName;
 
                 // Re-construct results by safe serializable type. (object array)
                 sinkTrampoline.Progress(new dynamic[]
@@ -150,8 +150,8 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             {
                 token.ThrowIfCancellationRequested();
 
-                string fullyQualifiedTestName = testResult.FullName;
-                string symbolName = testResult.Name;
+                string fullyQualifiedTestName = testResult.TestCase.UniqueName;
+                string symbolName = testResult.TestCase.SymbolName;
 
                 // Re-construct results by safe serializable type. (object array)
                 sinkTrampoline.Progress(new[]
