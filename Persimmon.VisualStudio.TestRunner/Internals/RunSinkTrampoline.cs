@@ -49,8 +49,6 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     parentSink_.ExtensionUri,
                     targetAssemblyPath_);
                 testCase.DisplayName = displayName;
-
-                testCase.DisplayName = fullyQualifiedTestName;
             }
 
             var testResult = new TestResult(testCase);
