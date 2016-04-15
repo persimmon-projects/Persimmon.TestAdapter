@@ -129,7 +129,7 @@ module private DiscovererImpl =
           match tryGetTestName body with
           | Some(cname, contextSeq, crange) -> 
             match contextSeq with
-            | true -> nestFromName context (name.idText + "." + cname) crange
+            | true -> nestFromName context cname crange
             | false -> nestFromIdent context name range
           | None -> nestFromIdent context name range
         yield namedContext.ToSymbolInformation()
@@ -173,7 +173,7 @@ module private DiscovererImpl =
           let nest = nestFromLongIdent context lid range
           yield! visitDeclarations nest nestedDecls
         // Module's let binding
-        | SynModuleDecl.Let(isRec, bindings, range) -> yield! visitBindings context bindings
+        | SynModuleDecl.Let(_, bindings, _) -> yield! visitBindings context bindings
         // Type definition
         | SynModuleDecl.Types(typeDefines, _) -> 
           for typeDefine in typeDefines do
