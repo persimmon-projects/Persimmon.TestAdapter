@@ -33,32 +33,31 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
 
         public void Progress(dynamic[] args)
         {
-            string fqtn = args[0];
+            string fullyQualifiedTestName = args[0];
+            string symbolName = args[1];
+            string displayName = args[2];
+            Exception[] exceptions = args[3];
+            TimeSpan duration = args[4];
+
             TestCase testCase;
-            if (testCases_.TryGetValue(fqtn, out testCase) == false)
+            if (testCases_.TryGetValue(fullyQualifiedTestName, out testCase) == false)
             {
                 // Invalid fqtn, try create only basic informational TestCase...
                 //Debug.Fail("Not valid fqtn: " + fqtn);
                 testCase = new TestCase(
-                    fqtn,
+                    fullyQualifiedTestName,
                     parentSink_.ExtensionUri,
                     targetAssemblyPath_);
-
-                SymbolInformation symbol = args[2];
-
-                testCase.DisplayName = args[0];
-                testCase.CodeFilePath = (symbol != null) ? symbol.FileName : null;
-                testCase.LineNumber = (symbol != null) ? symbol.MinLineNumber : 0;
+                testCase.DisplayName = displayName;
             }
 
             var testResult = new TestResult(testCase);
-            var exceptions = (Exception[])args[3];
 
             // TODO: Other outcome require handled.
             //   Strategy: testCases_ included target test cases,
             //     so match and filter into Finished(), filtered test cases marking TestOutcome.Notfound.
             testResult.Outcome = (exceptions.Length >= 1) ? TestOutcome.Failed : TestOutcome.Passed;
-            testResult.Duration = args[4];
+            testResult.Duration = duration;
 
             parentSink_.Progress(testResult);
         }

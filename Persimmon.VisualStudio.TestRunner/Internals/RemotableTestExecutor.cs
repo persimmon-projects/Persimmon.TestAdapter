@@ -103,32 +103,19 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                this.GetType().FullName,
                targetAssemblyPath));
 
-            var pdbReader = new PdbReader();
-            pdbReader.TryRead(targetAssemblyPath);
-
             // Callback delegate: testCase is ITestCase.
             var callback = new Action<dynamic>(testCase =>
             {
-                MemberInfo member = testCase.DeclaredMember.Value;
-                var method = member as MethodInfo;
-                var property = member as PropertyInfo;
-                var type = (method != null) ? method.DeclaringType :
-                    (property != null) ? property.DeclaringType :
-                    null;
-                var memberName = (type != null) ?
-                    string.Format("{0}.{1}", type.FullName, member.Name) :
-                    member.Name;
-
-                // If enable PdbReader, lookup debug information.
-                var symbol = pdbReader.GetSymbolInformation(memberName);
+                string fullyQualifiedTestName = testCase.UniqueName;
+                string symbolName = testCase.SymbolName;
+                string displayName = testCase.DisplayName;
 
                 // Re-construct results by safe serializable type. (object array)
-                sinkTrampoline.Progress(new[]
+                sinkTrampoline.Progress(new dynamic[]
                 {
-                    testCase.FullName,
-                    testCase.FullName,  // TODO: Context-structual path
-                    memberName,
-                    symbol
+                    fullyQualifiedTestName,
+                    symbolName,
+                    displayName
                 });
             });
 
@@ -160,33 +147,21 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             Debug.Assert(sinkTrampoline != null);
             Debug.Assert(token != null);
 
-            var pdbReader = new PdbReader();
-            pdbReader.TryRead(targetAssemblyPath);
-
             // Callback delegate: testResult is ITestResult.
             var callback = new Action<dynamic>(testResult =>
             {
                 token.ThrowIfCancellationRequested();
 
-                MemberInfo member = testResult.DeclaredMember;
-                var method = member as MethodInfo;
-                var property = member as PropertyInfo;
-                var type = (method != null) ? method.DeclaringType :
-                    (property != null) ? property.DeclaringType :
-                    null;
-                var memberName = (type != null) ?
-                    string.Format("{0}.{1}", type.FullName, member.Name) :
-                    member.Name;
-
-                // If enable PdbReader, lookup debug information.
-                var symbol = pdbReader.GetSymbolInformation(memberName);
+                string fullyQualifiedTestName = testResult.TestCase.UniqueName;
+                string symbolName = testResult.TestCase.SymbolName;
+                string displayName = testResult.TestCase.DisplayName;
 
                 // Re-construct results by safe serializable type. (object array)
                 sinkTrampoline.Progress(new[]
                 {
-                    testResult.FullName,
-                    memberName,
-                    symbol,
+                    fullyQualifiedTestName,
+                    symbolName,
+                    displayName,
                     testResult.Exceptions, // TODO: exn may failed serialize. try convert safe types...
                     testResult.Duration
                 });
