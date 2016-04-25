@@ -250,4 +250,5 @@ type Discoverer() =
   
   interface IDiscoverer with
     /// Discover and gather symbol informations synchronously.
-    member this.Discover targetAssemblyPath = this.AsyncDiscover targetAssemblyPath |> Async.RunSynchronously
+    member this.Discover targetAssemblyPath =
+      this.AsyncDiscover targetAssemblyPath |> Async.RunSynchronously
