@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
 		Persimmon.VisualStudio.TestExplorer.snk = Persimmon.VisualStudio.TestExplorer.snk
+		README.md = README.md
+		SymbolMatching.md = SymbolMatching.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persimmon.VisualStudio.TestRunner", "Persimmon.VisualStudio.TestRunner\Persimmon.VisualStudio.TestRunner.csproj", "{E7226D5A-7306-41D2-8A30-435728FD604B}"

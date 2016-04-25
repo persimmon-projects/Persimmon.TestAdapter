@@ -36,7 +36,14 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             string displayName = args[2];
 
             SymbolInformation symbol;
-            symbolInformations_.TryGetValue(symbolName, out symbol);
+            if (symbolInformations_.TryGetValue(symbolName, out symbol) == false)
+            {
+                Debug.WriteLine(string.Format(
+                    "SymbolInformation lookup failed: FQTN=\"{0}\", SymbolName=\"{1}\", DisplayName=\"{2}\"",
+                    fullyQualifiedTestName,
+                    symbolName,
+                    displayName));
+            }
 
             var testCase = new TestCase(
                 fullyQualifiedTestName,

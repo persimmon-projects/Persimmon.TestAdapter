@@ -66,11 +66,12 @@ module private DiscovererImpl =
           | SynExpr.Const(c, _) -> // Const
             match c with
             | SynConst.String(str, range) -> // String
-              let contextSeq = 
-                match expr1 with
-                | SynExpr.ArrayOrListOfSeqExpr(_, _, _) -> true
-                | _ -> false
-              Some(str, contextSeq, range)
+//              let contextSeq = 
+//                match expr1 with
+//                | SynExpr.ArrayOrListOfSeqExpr(_, _, _) -> true
+//                | _ -> false
+//              Some(str, contextSeq, range)
+              Some(str, false, range)
             | _ -> None
           | _ -> None
         | _ -> None

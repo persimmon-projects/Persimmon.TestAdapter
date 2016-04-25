@@ -42,6 +42,12 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             TestCase testCase;
             if (testCases_.TryGetValue(fullyQualifiedTestName, out testCase) == false)
             {
+                Debug.WriteLine(string.Format(
+                    "TestCase lookup failed: FQTN=\"{0}\", SymbolName=\"{1}\", DisplayName=\"{2}\"",
+                    fullyQualifiedTestName,
+                    symbolName,
+                    displayName));
+
                 // Invalid fqtn, try create only basic informational TestCase...
                 //Debug.Fail("Not valid fqtn: " + fqtn);
                 testCase = new TestCase(
