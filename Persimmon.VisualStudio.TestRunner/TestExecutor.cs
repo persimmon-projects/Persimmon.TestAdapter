@@ -161,6 +161,14 @@ namespace Persimmon.VisualStudio.TestRunner
                 GroupBy(symbol => symbol.SymbolName).
                 ToDictionary(g => g.Key, g => g.First());
 
+#if DEBUG
+            var fileName = Path.GetFileName(targetAssemblyPath);
+            foreach (var entry in symbolDictionary)
+            {
+                Debug.WriteLine(string.Format("Discover: FileName={0}, SymbolName={1}", fileName, entry.Key));
+            }
+#endif
+
             // Step2: Traverse target test assembly, retreive test cases and push to Visual Studio.
             await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
                 testRunnerAssemblyPath_,

@@ -17,19 +17,22 @@
 
 ## No pickup
 * invalid: tests
-  * success test(list) : list  -> Pickup but not valid range (ignore? require validation)
-  * failure test(list) : list
+  * success test(list) : list  -> Pickup but not valid range (ignore? require validation) -> Fixed.
+  * failure test(list) : list -> Fixed.
 * invalid: tests2
-  * success test1(array) : array  -> Pickup but not valid range (ignore? require validation)
-  * success test2(array) : array
-  * failure test(array) : array
+  * success test1(array) : array  -> Pickup but not valid range (ignore? require validation) -> Fixed.
+  * success test2(array) : array -> Fixed.
+  * failure test(array) : array -> Fixed.
 * invalid: tests3
-  * failure test(seq) : seq  -> Pickup but not valid range (ignore? require validation)
+  * failure test(seq) : seq  -> Pickup but not valid range (ignore? require validation) -> Fixed.
 * invalid tests4
-  * success test(list with value)  -> Pickup but not valid range (ignore? require validation)
-  * failure test(list with value)
+  * success test(list with value)  -> Pickup but not valid range (ignore? require validation) -> Fixed.
+  * failure test(list with value) -> Fixed.
 
 * --> Sequence not iterated.
+
+* tests6:
+  * source parameterize test : SymbolName="Persimmon.Sample.tests6.source parameterize test" : DictKey="SymbolName=Persimmon.Sample.tests6"
 
 ## Parameter expected demangle
 * should output full name  -> And invalid display name. (DisplayName == SymbolName ?)
