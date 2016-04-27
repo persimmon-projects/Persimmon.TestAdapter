@@ -46,33 +46,21 @@ module private DiscovererImpl =
   /// Try get detailed test name (test title):
   ///  expr:
   ///    App (Expr0):
-  ///        App (Expr00):
-  ///          Ident: test   <-- Ident required (value is ignore)
-  ///        App (Expr01):
-  ///          Const:
-  ///            String: "success test(list)"  <-- Return test title string.
+  ///      Ident: test   <-- Ident required (value is ignore)
   ///    App (Expr1):
-  ///        ArrayOrListOfSeqExpr:  <-- Return test title with "contextSeq=true" (ex: = context "Hoge" [ ... ])
-  ///        CompExpr:              <-- or Other nodes "contextSeq=false"
+  ///      Const:
+  ///        String: "success test(list)"  <-- Return test title string.
   /// TODO: Ugly match expr...
   let tryGetTestName = 
     function 
     | SynExpr.App(_, _, expr0, expr1, _) -> 
       match expr0 with
-      | SynExpr.App(_, _, expr00, expr01, _) -> 
-        match expr00 with
-        | SynExpr.Ident(_) -> // Ident
-          match expr01 with
-          | SynExpr.Const(c, _) -> // Const
-            match c with
-            | SynConst.String(str, range) -> // String
-//              let contextSeq = 
-//                match expr1 with
-//                | SynExpr.ArrayOrListOfSeqExpr(_, _, _) -> true
-//                | _ -> false
-//              Some(str, contextSeq, range)
-              Some(str, false, range)
-            | _ -> None
+      | SynExpr.Ident(_) -> // Ident
+        match expr1 with
+        | SynExpr.Const(c, _) -> // Const
+          match c with
+          | SynConst.String(str, range) -> // String
+            Some(str, range)
           | _ -> None
         | _ -> None
       | _ -> None
@@ -109,10 +97,16 @@ module private DiscovererImpl =
   /// Expression pre-interpret test titling and visit.
   and visitExpression (context : DiscoverContext) expr : SymbolInformation seq = 
     seq { 
-      let nest = 
-        match tryGetTestName expr with
-        | Some(name, _, range) -> Some(nestFromName context name range)
-        | None -> None
+      let nest =
+        match expr with
+        | SynExpr.App(_, _, expr0, _, _) ->
+          match tryGetTestName expr0 with
+          | Some(name, range) -> Some(nestFromName context name range)
+          | None ->
+            match tryGetTestName expr with
+            | Some(name, range) -> Some(nestFromName context name range)
+            | None -> None
+        | _ -> None
       match nest with
       | Some namedContext -> 
         yield namedContext.ToSymbolInformation()
@@ -126,13 +120,7 @@ module private DiscovererImpl =
       let (Binding(_, _, _, _, _, _, _, pat, _, body, _, _)) = binding
       match pat with
       | SynPat.Named(_, name, _, _, range) -> 
-        let namedContext = 
-          match tryGetTestName body with
-          | Some(cname, contextSeq, crange) -> 
-            match contextSeq with
-            | true -> nestFromName context cname crange
-            | false -> nestFromIdent context name range
-          | None -> nestFromIdent context name range
+        let namedContext = nestFromIdent context name range
         yield namedContext.ToSymbolInformation()
         yield! visitExpressionInternal namedContext body
       | SynPat.LongIdent(LongIdentWithDots(lid, _), _, _, _, _, range) -> 

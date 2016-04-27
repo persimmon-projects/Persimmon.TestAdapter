@@ -32,7 +32,8 @@
 * --> Sequence not iterated.
 
 * tests6:
-  * source parameterize test : SymbolName="Persimmon.Sample.tests6.source parameterize test" : DictKey="SymbolName=Persimmon.Sample.tests6"
+  * source parameterize test : SymbolName="Persimmon.Sample.tests6.source parameterize test" : DictKey="Persimmon.Sample.tests6"
+  * --> "Persimmon.Sample.tests6.innerTest"
 
 ## Parameter expected demangle
 * should output full name  -> And invalid display name. (DisplayName == SymbolName ?)
