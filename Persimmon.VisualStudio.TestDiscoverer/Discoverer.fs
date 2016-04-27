@@ -1,6 +1,7 @@
 ﻿namespace Persimmon.VisualStudio.TestDiscoverer
 
 open System
+open System.Diagnostics
 open System.IO
 open Microsoft.FSharp.Compiler.Ast
 open Microsoft.FSharp.Compiler.Range
@@ -25,6 +26,12 @@ module private DiscovererImpl =
       DiscoverContext([ name ]
                       |> (Seq.append symbolNames)
                       |> Seq.toArray, range)
+
+    /// Unnest context.
+    member __.Decrease(range) =
+      DiscoverContext(symbolNames
+        |> Seq.take(symbolNames.Length - 1)
+        |> Seq.toArray, range)
     
     /// Construct SymbolInformation.
     member __.ToSymbolInformation() = 
@@ -104,7 +111,11 @@ module private DiscovererImpl =
           | Some(name, range) -> Some(nestFromName context name range)
           | None ->
             match tryGetTestName expr with
-            | Some(name, range) -> Some(nestFromName context name range)
+            | Some(name, range) ->
+              // DIRTY HACK: If expr is short than expr0, must decrease context.
+              //   tests6 : "Persimmon.Sample.tests6.innerTest.source parameterize test" --> "Persimmon.Sample.tests6.source parameterize test"
+              let decreasedContext = context.Decrease range
+              Some(nestFromName decreasedContext name range)
             | None -> None
         | _ -> None
       match nest with

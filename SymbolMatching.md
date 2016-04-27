@@ -15,7 +15,7 @@
 * tests6
   * source parameterize test  -> Fixed.
 
-## No pickup
+## No pickup  -> Fixed.
 * invalid: tests
   * success test(list) : list  -> Pickup but not valid range (ignore? require validation) -> Fixed.
   * failure test(list) : list -> Fixed.
@@ -33,7 +33,7 @@
 
 * tests6:
   * source parameterize test : SymbolName="Persimmon.Sample.tests6.source parameterize test" : DictKey="Persimmon.Sample.tests6"
-  * --> "Persimmon.Sample.tests6.innerTest"
+  * --> "Persimmon.Sample.tests6.source parameterize test" -> Fixed. (with DIRTY HACK)
 
 ## Parameter expected demangle
 * should output full name  -> And invalid display name. (DisplayName == SymbolName ?)
