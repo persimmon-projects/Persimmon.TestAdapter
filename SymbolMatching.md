@@ -36,5 +36,5 @@
   * --> "Persimmon.Sample.tests6.source parameterize test" -> Fixed. (with DIRTY HACK)
 
 ## Parameter expected demangle
-* should output full name  -> And invalid display name. (DisplayName == SymbolName ?)
-* printer should print list in a row  -> And invalid display name. (DisplayName == SymbolName ?)
+* should output full name  -> And invalid display name. (DisplayName == SymbolName ?) -> Fixed.
+* printer should print list in a row  -> And invalid display name. (DisplayName == SymbolName ?) -> Fixed.
