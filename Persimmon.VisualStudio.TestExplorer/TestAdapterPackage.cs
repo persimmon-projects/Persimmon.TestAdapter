@@ -3,19 +3,23 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
+
 using EnvDTE;
+using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 
-namespace Persimmon.VisualStudio.TestExplorer
+using Persimmon.VisualStudio.TestExplorer;
+
+namespace persimmon_projects.Persimmon_VisualStudio_TestExplorer
 {
     [PackageRegistration(UseManagedResourcesOnly = true)]
     [InstalledProductRegistration("#110", "#112", "1.0", IconResourceID = 400)]
     [Guid(Constant.VisualStudioPkgIdString)]
-    [ProvideAutoLoad("ADFC4E64-0397-11D1-9F4E-00A0C911004F")]   // UICONTEXT_NoSolution
-    [ProvideAutoLoad("F1536EF8-92EC-443C-9ED7-FDADF150DA82")]   // UICONTEXT_SolutionExists
-    public sealed class TestAdapterPackage : Package
+    [ProvideAutoLoad(VSConstants.UICONTEXT.NoSolution_string)]
+    [ProvideAutoLoad(VSConstants.UICONTEXT.SolutionExists_string)]
+    public sealed class Persimmon_VisualStudio_TestExplorerPackage : Package
     {
-        public TestAdapterPackage()
+        public Persimmon_VisualStudio_TestExplorerPackage()
         {
             Trace.WriteLine("TestAdapterPackage: constructed.");
 
