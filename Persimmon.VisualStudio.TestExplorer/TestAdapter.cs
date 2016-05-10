@@ -20,13 +20,16 @@ namespace Persimmon.VisualStudio.TestExplorer
     [DefaultExecutorUri(Constant.ExtensionUriString)]
     public sealed class TestAdapter : ITestDiscoverer, ITestExecutor
     {
+        #region Fields
         private static readonly object lock_ = new object();
         private static bool ready_;
 
         private readonly Version version_ = typeof(TestAdapter).Assembly.GetName().Version;
         private readonly ConcurrentQueue<CancellationTokenSource> cancellationTokens_ =
             new ConcurrentQueue<CancellationTokenSource>();
+        #endregion
 
+        #region WaitingForAttachDebugger
         [Conditional("DEBUG")]
         private void WaitingForAttachDebugger()
         {
@@ -36,42 +39,40 @@ namespace Persimmon.VisualStudio.TestExplorer
                 {
                     NativeMethods.MessageBox(
                         IntPtr.Zero,
-                        string.Format("Waiting for DEBUG ({0}) ...", Process.GetCurrentProcess().Id),
-                        this.GetType().FullName,
+                        "Waiting for attach debugger ...",
+                        string.Format("Persimmon ({0})", Process.GetCurrentProcess().Id),
                         NativeMethods.MessageBoxOptions.IconWarning | NativeMethods.MessageBoxOptions.OkOnly);
                     ready_ = true;
                 }
             }
         }
+        #endregion
 
-        public void DiscoverTests(
+        #region DiscoverTests
+        private async Task DiscoverTestsAsync(
             IEnumerable<string> sources,
             IDiscoveryContext discoveryContext,
             IMessageLogger logger,
             ITestCaseDiscoverySink discoverySink)
         {
-            this.WaitingForAttachDebugger();
-
             logger.SendMessage(
                 TestMessageLevel.Informational,
                 string.Format("Persimmon Test Explorer {0} discovering tests started", version_));
+
             try
             {
                 var testExecutor = new TestExecutor();
                 var sink = new TestDiscoverySink(discoveryContext, logger, discoverySink);
 
-                // Discover must synch execute.
-#if DEBUG
+#if false
                 foreach (var task in sources.Select(
                     targetAssemblyPath => testExecutor.DiscoverAsync(targetAssemblyPath, sink)))
                 {
-                    task.Wait();
+                    await task;
                 }
 #else
-                var task = Task.WhenAll(sources.Select(
+                await Task.WhenAll(sources.Select(
                     targetAssemblyPath => testExecutor.DiscoverAsync(targetAssemblyPath, sink)));
-
-                task.Wait();
 #endif
             }
             catch (Exception ex)
@@ -88,7 +89,20 @@ namespace Persimmon.VisualStudio.TestExplorer
             }
         }
 
-        public void RunTests(
+        public void DiscoverTests(
+            IEnumerable<string> sources,
+            IDiscoveryContext discoveryContext,
+            IMessageLogger logger,
+            ITestCaseDiscoverySink discoverySink)
+        {
+            this.WaitingForAttachDebugger();
+
+            this.DiscoverTestsAsync(sources, discoveryContext, logger, discoverySink).Wait();
+        }
+        #endregion
+
+        #region RunTests (Overall)
+        private async Task RunTestsAsync(
             IEnumerable<string> sources,
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
@@ -108,11 +122,56 @@ namespace Persimmon.VisualStudio.TestExplorer
                 cancellationTokens_.Enqueue(cts);
 
                 // Start tests.
-                // TODO: Generate TestCase here...
-                var task = Task.WhenAll(sources.Select(targetAssemblyPath =>
+                await Task.WhenAll(sources.Select(targetAssemblyPath =>
                     testExecutor.RunAsync(targetAssemblyPath, new TestCase[0], sink, cts.Token)));
+            }
+            catch (Exception ex)
+            {
+                frameworkHandle.SendMessage(
+                    TestMessageLevel.Error,
+                    ex.ToString());
+            }
+            finally
+            {
+                frameworkHandle.SendMessage(
+                    TestMessageLevel.Informational,
+                    string.Format("Persimmon Test Explorer {0} run tests finished", version_));
+            }
+        }
 
-                task.Wait();
+        public void RunTests(
+            IEnumerable<string> sources,
+            IRunContext runContext,
+            IFrameworkHandle frameworkHandle)
+        {
+            this.WaitingForAttachDebugger();
+
+            this.RunTestsAsync(sources, runContext, frameworkHandle).Wait();
+        }
+        #endregion
+
+        #region RunTests
+        private async Task RunTestsAsync(
+            IEnumerable<TestCase> tests,
+            IRunContext runContext,
+            IFrameworkHandle frameworkHandle)
+        {
+            frameworkHandle.SendMessage(
+                TestMessageLevel.Informational,
+                string.Format("Persimmon Test Explorer {0} run tests started", version_));
+
+            try
+            {
+                var testExecutor = new TestExecutor();
+                var sink = new TestRunSink(runContext, frameworkHandle);
+
+                // Register cancellation token.
+                var cts = new CancellationTokenSource();
+                cancellationTokens_.Enqueue(cts);
+
+                // Start tests.
+                await Task.WhenAll(tests.GroupBy(testCase => testCase.Source).
+                    Select(g => testExecutor.RunAsync(g.Key, g.ToArray(), sink, cts.Token)));
             }
             catch (Exception ex)
             {
@@ -135,38 +194,11 @@ namespace Persimmon.VisualStudio.TestExplorer
         {
             this.WaitingForAttachDebugger();
 
-            frameworkHandle.SendMessage(
-                TestMessageLevel.Informational,
-                string.Format("Persimmon Test Explorer {0} run tests started", version_));
-            try
-            {
-                var testExecutor = new TestExecutor();
-                var sink = new TestRunSink(runContext, frameworkHandle);
-
-                // Register cancellation token.
-                var cts = new CancellationTokenSource();
-                cancellationTokens_.Enqueue(cts);
-
-                // Start tests.
-                var task = Task.WhenAll(tests.GroupBy(testCase => testCase.Source).
-                    Select(g => testExecutor.RunAsync(g.Key, g.ToArray(), sink, cts.Token)));
-
-                task.Wait();
-            }
-            catch (Exception ex)
-            {
-                frameworkHandle.SendMessage(
-                    TestMessageLevel.Error,
-                    ex.ToString());
-            }
-            finally
-            {
-                frameworkHandle.SendMessage(
-                    TestMessageLevel.Informational,
-                    string.Format("Persimmon Test Explorer {0} run tests finished", version_));
-            }
+            this.RunTestsAsync(tests, runContext, frameworkHandle).Wait();
         }
+        #endregion
 
+        #region Cancel
         public void Cancel()
         {
             // Cancel all tasks.
@@ -175,25 +207,6 @@ namespace Persimmon.VisualStudio.TestExplorer
                 cts.Cancel();
             }
         }
-
-#if false
-        interface ITestDiscoverer with
-        member this.DiscoverTests(sources: string seq, context: IDiscoveryContext,logger: IMessageLogger, sink: ITestCaseDiscoverySink) =
-            try
-            logger.SendMessage(TestMessageLevel.Informational, sprintf "Persimmon Test Explorer %s discovering tests is started" version)
-            try
-                runner.DiscoverTests(sources, sink)
-            with e ->
-                logger.SendMessage(TestMessageLevel.Error, e.ToString())
-            finally
-            logger.SendMessage(TestMessageLevel.Informational, sprintf "Persimmon Test Explorer %s discovering tests is finished" version)
-        interface ITestExecutor with
-        member this.RunTests(tests: TestCase seq, runContext: IRunContext, handle: IFrameworkHandle) =
-            (this :> ITestExecutor).RunTests(tests |> Seq.map (fun c -> c.Source), runContext, handle)
-        member this.RunTests(sources: string seq, _: IRunContext, handle: IFrameworkHandle) =
-            runner.RunTests(sources, handle)
-        member __.Cancel() =
-            ()
-#endif
+        #endregion
     }
 }
