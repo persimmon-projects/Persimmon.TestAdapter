@@ -56,7 +56,7 @@ namespace Persimmon.VisualStudio.TestExplorer
             Timeout = 32000
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern MessageBoxResult
             MessageBox(IntPtr hWnd, String text, String caption, MessageBoxOptions options);
     }

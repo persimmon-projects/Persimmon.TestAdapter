@@ -11,11 +11,14 @@
     <AssemblyName>Persimmon.VisualStudio.TestDiscoverer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
+    <TargetFrameworkProfile />
+    <ApplicationIcon>..\persimmon.ico</ApplicationIcon>
     <Name>Persimmon.VisualStudio.TestDiscoverer</Name>
     <RestorePackages>true</RestorePackages>
-    <TargetFrameworkProfile />
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <NuGetPackageImportStamp>502bc50a</NuGetPackageImportStamp>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\Persimmon.VisualStudio.TestExplorer.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,10 +38,6 @@
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Release\Persimmon.VisualStudio.TestDiscoverer.XML</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\Persimmon.VisualStudio.TestExplorer.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -71,6 +70,9 @@
     <Compile Include="Properties\AssemblyInfo.fs" />
     <Content Include="packages.config" />
     <Compile Include="Discoverer.fs" />
+    <None Include="..\persimmon.ico">
+      <Link>persimmon.ico</Link>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="FSharp.Compiler.Service">
