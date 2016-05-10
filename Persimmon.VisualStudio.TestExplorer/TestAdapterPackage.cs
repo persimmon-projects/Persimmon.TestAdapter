@@ -4,6 +4,8 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
+using System.GACManagedAccess;
+using System.IO;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 
@@ -29,6 +31,10 @@ namespace Persimmon.VisualStudio.TestExplorer
     public sealed class TestAdapterPackage : Package
     {
         private static readonly byte[] msPublicKeyToken_ = { 0xb0, 0x3f, 0x5f, 0x7f, 0x11, 0xd5, 0x0a, 0x3a };
+        private static readonly CultureInfo neutralCulture_ = CultureInfo.InvariantCulture.Parent;
+
+        private static readonly string testRunnerUniqueId_ = "Persimmon.VisualStudio.TestRunner";
+        private static readonly string testRunnerDescription_ = "Persimmon.VisualStudio.TestRunner assembly";
 
         /// <summary>
         /// Default constructor of the package.
@@ -43,12 +49,14 @@ namespace Persimmon.VisualStudio.TestExplorer
         {
             Trace.WriteLine("TestAdapterPackage: constructed.");
         }
+
+        #region LoadExtensionManager
         private Assembly LoadExtensionManager()
         {
             var envDteName = new AssemblyName("EnvDTE")
             {
                 Version = new Version(8, 0, 0, 0),
-                CultureInfo = CultureInfo.InvariantCulture.Parent
+                CultureInfo = neutralCulture_
             };
             envDteName.SetPublicKeyToken(msPublicKeyToken_);
             var envDteAssembly = Assembly.Load(envDteName);
@@ -59,14 +67,16 @@ namespace Persimmon.VisualStudio.TestExplorer
             var extensionManagerName = new AssemblyName("Microsoft.VisualStudio.ExtensionManager")
             {
                 Version = new Version((int)dteMajorVersion, 0, 0, 0),
-                CultureInfo = CultureInfo.InvariantCulture.Parent
+                CultureInfo = neutralCulture_
             };
             extensionManagerName.SetPublicKeyToken(msPublicKeyToken_);
 
             return Assembly.Load(extensionManagerName);
         }
+        #endregion
 
-        private string GetInstallPath()
+        #region GetInstalledPath
+        private string GetInstalledPath()
         {
             var extensionManagerAssembly = this.LoadExtensionManager();
             var extensionManagerType = extensionManagerAssembly.GetType(
@@ -84,6 +94,7 @@ namespace Persimmon.VisualStudio.TestExplorer
 
             return installPath;
         }
+        #endregion
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
@@ -95,9 +106,20 @@ namespace Persimmon.VisualStudio.TestExplorer
 
             base.Initialize();
 
-            var installPath = this.GetInstallPath();
+            var installedPath = this.GetInstalledPath();
+            Trace.WriteLine(string.Format("TestAdapterPackage: InstalledPath=\"{0}\"", installedPath));
 
-            // TODO:reg gac
+            var testRunnerPath = Path.Combine(installedPath, "Persimmon.VisualStudio.TestRunner.dll");
+
+            var testRunnerReference = new InstallReference(
+                InstallReferenceGuid.OpaqueGuid,
+                testRunnerUniqueId_,
+                testRunnerDescription_);
+
+            AssemblyCache.InstallAssembly(
+                testRunnerPath,
+                testRunnerReference,
+                AssemblyCommitFlags.Force);
 
             Trace.WriteLine("TestAdapterPackage: Initialize(): exit.");
         }
