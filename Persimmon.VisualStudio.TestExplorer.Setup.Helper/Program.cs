@@ -91,7 +91,7 @@ namespace Persimmon.VisualStudio.TestExplorer.Setup.Helper
         private static void UninstallVsixs(string vsixInstallerPath, IEnumerable<string> vsixPaths)
         {
             foreach (var arguments in vsixPaths.Select(path =>
-                string.Format("/admin /uninstall:{0}", GetVsixIdentityFromPackage(path))))
+                string.Format("/quiet /admin /uninstall:{0}", GetVsixIdentityFromPackage(path))))
             {
                 Trace.WriteLine(string.Format(
                     "Persimmon.VisualStudio.TestExplorer: Install, Arguments=\"{0}\"",

@@ -168,15 +168,15 @@
     <Compile Include="Sinks\TestDiscoverySink.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestAdapter.cs" />
+    <Content Include="LICENSE.txt">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="persimmon.ico">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <None Include="..\Persimmon.VisualStudio.TestExplorer.snk">
       <Link>Properties\Persimmon.VisualStudio.TestExplorer.snk</Link>
     </None>
-    <Resource Include="..\persimmon.ico">
-      <Link>Properties\persimmon.ico</Link>
-    </Resource>
-    <Resource Include="..\LICENSE.txt">
-      <Link>LICENSE.txt</Link>
-    </Resource>
     <Content Include="FSharp.Compiler.Service.ProjectCrackerTool.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>

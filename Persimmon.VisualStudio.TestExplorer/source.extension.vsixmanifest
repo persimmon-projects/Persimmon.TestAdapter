@@ -5,11 +5,11 @@
     <DisplayName>Persimmon.VisualStudio.TestExplorer</DisplayName>
     <Description xml:space="preserve">Visual Studio test explorer adapter for Persimmon.</Description>
     <MoreInfo>https://github.com/persimmon-projects/Persimmon.VisualStudio.TestExplorer</MoreInfo>
-    <License>..\LICENSE.txt</License>
-    <Icon>..\persimmon.ico</Icon>
+    <License>LICENSE.txt</License>
+    <Icon>persimmon.ico</Icon>
     <Tags>persimmon, FSharp, Unit Testing, Testing, Test explorer, Test adapter</Tags>
   </Metadata>
-  <Installation AllUsers="true" InstalledByMsi="true">
+  <Installation AllUsers="true">
     <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0,)" />
   </Installation>
   <Dependencies>
