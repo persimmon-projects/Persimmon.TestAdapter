@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Shell;
 
@@ -29,6 +28,8 @@ namespace Persimmon.VisualStudio.TestExplorer
     [ProvideAutoLoad(VSConstants.UICONTEXT.SolutionExists_string)]
     public sealed class TestAdapterPackage : Package
     {
+        private static readonly byte[] msPublicKeyToken_ = { 0xb0, 0x3f, 0x5f, 0x7f, 0x11, 0xd5, 0x0a, 0x3a };
+
         /// <summary>
         /// Default constructor of the package.
         /// </summary>
@@ -44,27 +45,44 @@ namespace Persimmon.VisualStudio.TestExplorer
         }
         private Assembly LoadExtensionManager()
         {
-            var dte = (DTE)this.GetService(typeof(DTE));
-            var dteMajorVersion = int.Parse(dte.Version);
-            var an = new AssemblyName("Microsoft.VisualStudio.ExtensionManager")
+            var envDteName = new AssemblyName("EnvDTE")
             {
-                Version = new Version(dteMajorVersion, 0, 0),
-                CultureInfo = CultureInfo.GetCultureInfo("neutral")
+                Version = new Version(8, 0, 0, 0),
+                CultureInfo = CultureInfo.InvariantCulture.Parent
             };
-            an.SetPublicKeyToken(new byte[] { 0xb0, 0x3f, 0x5f, 0x7f, 0x11, 0xd5, 0x0a, 0x3a });
-            return Assembly.Load(an);
+            envDteName.SetPublicKeyToken(msPublicKeyToken_);
+            var envDteAssembly = Assembly.Load(envDteName);
+            var dteType = envDteAssembly.GetType("EnvDTE.DTE");
+            dynamic dte = this.GetService(dteType);
+
+            double dteMajorVersion = double.Parse(dte.Version);
+            var extensionManagerName = new AssemblyName("Microsoft.VisualStudio.ExtensionManager")
+            {
+                Version = new Version((int)dteMajorVersion, 0, 0, 0),
+                CultureInfo = CultureInfo.InvariantCulture.Parent
+            };
+            extensionManagerName.SetPublicKeyToken(msPublicKeyToken_);
+
+            return Assembly.Load(extensionManagerName);
         }
 
         private string GetInstallPath()
         {
-            var assembly = this.LoadExtensionManager();
-            var extensionManagerType = assembly.GetType(
+            var extensionManagerAssembly = this.LoadExtensionManager();
+            var extensionManagerType = extensionManagerAssembly.GetType(
                 "Microsoft.VisualStudio.ExtensionManager.SVsExtensionManager");
-            var extensionManager = this.GetService(extensionManagerType);
-            var installedExtensionType = assembly.GetType(
+            dynamic extensionManager = this.GetService(extensionManagerType);
+            
+            dynamic installedExtension = extensionManager.GetInstalledExtension(
+                Constant.VisualStudioPkgIdString);
+
+            var installedExtensionType = extensionManagerAssembly.GetType(
                 "Microsoft.VisualStudio.ExtensionManager.IInstalledExtension");
             var installPathProperty = installedExtensionType.GetProperty("InstallPath");
-            return (string)installPathProperty.GetValue(extensionManager, null);
+
+            var installPath = (string)installPathProperty.GetValue(installedExtension, null);
+
+            return installPath;
         }
 
         /// <summary>
