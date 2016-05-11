@@ -15,6 +15,9 @@ using Persimmon.VisualStudio.TestExplorer.Sinks;
 
 namespace Persimmon.VisualStudio.TestExplorer
 {
+    /// <summary>
+    /// Persimmon test explorer adapter class.
+    /// </summary>
     [FileExtension(".dll")]
     [ExtensionUri(Constant.ExtensionUriString)]
     [DefaultExecutorUri(Constant.ExtensionUriString)]
@@ -89,6 +92,13 @@ namespace Persimmon.VisualStudio.TestExplorer
             }
         }
 
+        /// <summary>
+        /// Discovery test definitions.
+        /// </summary>
+        /// <param name="sources">Source assembly paths.</param>
+        /// <param name="discoveryContext">Using this information context.</param>
+        /// <param name="logger">Output logger (connected to debugger view).</param>
+        /// <param name="discoverySink">Results sink interface.</param>
         public void DiscoverTests(
             IEnumerable<string> sources,
             IDiscoveryContext discoveryContext,
@@ -139,6 +149,12 @@ namespace Persimmon.VisualStudio.TestExplorer
             }
         }
 
+        /// <summary>
+        /// Execute tests.
+        /// </summary>
+        /// <param name="sources">Source assembly paths.</param>
+        /// <param name="runContext">Using this execution context.</param>
+        /// <param name="frameworkHandle">Testing framework handler.</param>
         public void RunTests(
             IEnumerable<string> sources,
             IRunContext runContext,
@@ -187,6 +203,12 @@ namespace Persimmon.VisualStudio.TestExplorer
             }
         }
 
+        /// <summary>
+        /// Execute tests.
+        /// </summary>
+        /// <param name="tests">Target test cases.</param>
+        /// <param name="runContext">Using this execution context.</param>
+        /// <param name="frameworkHandle">Testing framework handler.</param>
         public void RunTests(
             IEnumerable<TestCase> tests,
             IRunContext runContext,
@@ -199,6 +221,9 @@ namespace Persimmon.VisualStudio.TestExplorer
         #endregion
 
         #region Cancel
+        /// <summary>
+        /// Cancel request for current executing tests (RunTests).
+        /// </summary>
         public void Cancel()
         {
             // Cancel all tasks.

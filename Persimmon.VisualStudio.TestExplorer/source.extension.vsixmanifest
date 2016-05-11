@@ -7,7 +7,7 @@
     <MoreInfo>https://github.com/persimmon-projects/Persimmon.VisualStudio.TestExplorer</MoreInfo>
     <License>LICENSE.txt</License>
     <Icon>persimmon.ico</Icon>
-    <Tags>Unit Testing, Testing, Test explorer, Test adapter</Tags>
+    <Tags>persimmon, FSharp, Unit Testing, Testing, Test explorer, Test adapter</Tags>
   </Metadata>
   <Installation AllUsers="true">
     <InstallationTarget Id="Microsoft.VisualStudio.Pro" Version="[12.0,)" />
