@@ -29,25 +29,25 @@
 
     <Fragment>
         <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-            <Component Id="C.Persimmon.VisualStudio.TestExplorer.2013" Guid="DA36B40E-CF11-4314-B34F-9FA42B043096" Directory="INSTALLFOLDER">
-                <Condition><![CDATA[VS2013DEVENV AND NOT VS2015DEVENV]]></Condition>
-                <VSExtension:VsixPackage File="F.Persimmon.VisualStudio.TestExplorer.vsix"
+            <Component Id="C.Persimmon.VisualStudio.TestExplorer.2013" Guid="DA36B40E-CF11-4314-B34F-9FA42B043096">
+                <Condition><![CDATA[VS2013DEVENV AND (NOT VS2015DEVENV)]]></Condition>
+                <VSExtension:VsixPackage File="F.Persimmon.VisualStudio.TestExplorer.vsix.2013"
                                          PackageId="Persimmon.VisualStudio.TestExplorer.8022813b-6e6b-4973-864d-f5b53b2a3c23"
                                          Target="professional" TargetVersion="12.0" Vital="yes" Permanent="no"/>
-                <File Id="F.Persimmon.VisualStudio.TestExplorer.vsix" Name="Persimmon.VisualStudio.TestExplorer.vsix"
+                <File Id="F.Persimmon.VisualStudio.TestExplorer.vsix.2013" Name="Persimmon.VisualStudio.TestExplorer.vsix"
                       Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestExplorer\bin\$(var.Persimmon.VisualStudio.TestExplorer.Configuration)\Persimmon.VisualStudio.TestExplorer.vsix"/>
-                <File Id="F.Persimmon.VisualStudio.TestRunner.dll" Name="Persimmon.VisualStudio.TestRunner.dll"
+                <File Id="F.Persimmon.VisualStudio.TestRunner.dll.2013" Name="Persimmon.VisualStudio.TestRunner.dll"
                       Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestRunner\bin\$(var.Persimmon.VisualStudio.TestRunner.Configuration)\Persimmon.VisualStudio.TestRunner.dll"
                       KeyPath="yes" Assembly=".net"/>
             </Component>
-            <Component Id="C.Persimmon.VisualStudio.TestExplorer.2015" Guid="DA36B40E-CF11-4314-B34F-9FA42B043096" Directory="INSTALLFOLDER">
-                <Condition><![CDATA[NOT VS2013DEVENV AND VS2015DEVENV]]>></Condition>
-                <VSExtension:VsixPackage File="F.Persimmon.VisualStudio.TestExplorer.vsix"
+            <Component Id="C.Persimmon.VisualStudio.TestExplorer.2015" Guid="10E9037B-3B5D-4440-B6D3-A2EAC69C5D52">
+                <Condition><![CDATA[(NOT VS2013DEVENV) AND VS2015DEVENV]]></Condition>
+                <VSExtension:VsixPackage File="F.Persimmon.VisualStudio.TestExplorer.vsix.2015"
                                          PackageId="Persimmon.VisualStudio.TestExplorer.8022813b-6e6b-4973-864d-f5b53b2a3c23"
                                          Target="professional" TargetVersion="14.0" Vital="yes" Permanent="no"/>
-                <File Id="F.Persimmon.VisualStudio.TestExplorer.vsix" Name="Persimmon.VisualStudio.TestExplorer.vsix"
+                <File Id="F.Persimmon.VisualStudio.TestExplorer.vsix.2015" Name="Persimmon.VisualStudio.TestExplorer.vsix"
                       Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestExplorer\bin\$(var.Persimmon.VisualStudio.TestExplorer.Configuration)\Persimmon.VisualStudio.TestExplorer.vsix"/>
-                <File Id="F.Persimmon.VisualStudio.TestRunner.dll" Name="Persimmon.VisualStudio.TestRunner.dll"
+                <File Id="F.Persimmon.VisualStudio.TestRunner.dll.2015" Name="Persimmon.VisualStudio.TestRunner.dll"
                       Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestRunner\bin\$(var.Persimmon.VisualStudio.TestRunner.Configuration)\Persimmon.VisualStudio.TestRunner.dll"
                       KeyPath="yes" Assembly=".net"/>
             </Component>
