@@ -14,10 +14,6 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyConfiguration("RELEASE")>]
 #endif
 
-[<assembly: AssemblyVersion("1.0.3")>]
-[<assembly: AssemblyFileVersion("1.0.3")>]
-[<assembly: AssemblyInformationalVersion("1.0.3")>]
-
 [<assembly: AssemblyTitleAttribute("Persimmon.VisualStudio.TestDiscoverer")>]
 [<assembly: AssemblyDescriptionAttribute("")>]
 [<assembly: GuidAttribute("D5478524-6779-4A0C-A056-50CF603CBA91")>]
