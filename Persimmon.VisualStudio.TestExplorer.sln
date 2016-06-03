@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6C103690-C369-475A-9B96-2CB9E4AEE4E3}"
 	ProjectSection(SolutionItems) = preProject
@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		SymbolMatching.md = SymbolMatching.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BC7C2940-E863-40D4-881E-6421622969B5}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persimmon.VisualStudio.TestRunner", "Persimmon.VisualStudio.TestRunner\Persimmon.VisualStudio.TestRunner.csproj", "{E7226D5A-7306-41D2-8A30-435728FD604B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persimmon.VisualStudio.TestExplorer", "Persimmon.VisualStudio.TestExplorer\Persimmon.VisualStudio.TestExplorer.csproj", "{4F2D32B2-0CC1-48E2-A186-81188BEB2A64}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BC7C2940-E863-40D4-881E-6421622969B5}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Persimmon.VisualStudio.TestDiscoverer", "Persimmon.VisualStudio.TestDiscoverer\Persimmon.VisualStudio.TestDiscoverer.fsproj", "{75D1134F-99B0-4753-8481-D241DC314C73}"
 EndProject

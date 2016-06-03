@@ -6,6 +6,9 @@
 
         <PropertyRef Id="VS2013DEVENV"/>
         <PropertyRef Id="VS2015DEVENV"/>
+
+        <UIRef Id="WixUI_Minimal" />
+        <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
         
         <Condition Message="Microsoft Visual Studio 2013 and/or 2015 is not installed. It is mandatory in order to install this product.">
             <![CDATA[Installed OR VS2013DEVENV OR VS2015DEVENV]]>
