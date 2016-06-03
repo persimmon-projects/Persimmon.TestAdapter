@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:Persimmon.VisualStudio.TestExplorer.Setup"
+"ProjectName" = "8:Persimmon.VisualStudio.TestExplorer.Setup.IP"
 "LanguageId" = "3:0"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:0"
@@ -21,7 +21,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_25F10806F1B22AA39F9C92F4737E916B"
+        "MsmKey" = "8:_3366D7A9B58B4F0ACCA05BD9A6DCC490"
+        "OwnerKey" = "8:_E82474569B1E1B8C3FB9DB3825EEFF1A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3366D7A9B58B4F0ACCA05BD9A6DCC490"
         "OwnerKey" = "8:_E1F89892A2EA43548EC6DB87429CB752"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -29,18 +35,6 @@
         {
         "MsmKey" = "8:_3738002DE9A3424CB2A73F8876629860"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_824340333AEF1FC75B49E8F03FE5684B"
-        "OwnerKey" = "8:_25F10806F1B22AA39F9C92F4737E916B"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_824340333AEF1FC75B49E8F03FE5684B"
-        "OwnerKey" = "8:_E1F89892A2EA43548EC6DB87429CB752"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -69,6 +63,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E82474569B1E1B8C3FB9DB3825EEFF1A"
+        "OwnerKey" = "8:_E1F89892A2EA43548EC6DB87429CB752"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_F816659AF4CB7518710BBF782A2A7139"
         "OwnerKey" = "8:_1AEA4397C77646AFB0EBE39AD8FD38E5"
         "MsmSig" = "8:_UNDEFINED"
@@ -82,13 +82,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_25F10806F1B22AA39F9C92F4737E916B"
+        "OwnerKey" = "8:_E82474569B1E1B8C3FB9DB3825EEFF1A"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_824340333AEF1FC75B49E8F03FE5684B"
+        "OwnerKey" = "8:_3366D7A9B58B4F0ACCA05BD9A6DCC490"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -226,23 +226,23 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_25F10806F1B22AA39F9C92F4737E916B"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_3366D7A9B58B4F0ACCA05BD9A6DCC490"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Microsoft.VisualStudio.TestPlatform.ObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:msdia140typelib_clr0200, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_25F10806F1B22AA39F9C92F4737E916B"
+                    "_3366D7A9B58B4F0ACCA05BD9A6DCC490"
                     {
-                    "Name" = "8:Microsoft.VisualStudio.TestPlatform.ObjectModel.dll"
+                    "Name" = "8:msdia140typelib_clr0200.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:Microsoft.VisualStudio.TestPlatform.ObjectModel.dll"
+            "SourcePath" = "8:msdia140typelib_clr0200.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
-            "Folder" = "8:_6136004A094246568CCA2808E21C9794"
+            "Folder" = "8:_F0B75C3C04B24AAD9EB86F4E5F1F1439"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -253,7 +253,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -275,37 +275,6 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_824340333AEF1FC75B49E8F03FE5684B"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:msdia120typelib_clr0200, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_824340333AEF1FC75B49E8F03FE5684B"
-                    {
-                    "Name" = "8:msdia120typelib_clr0200.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:msdia120typelib_clr0200.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_6136004A094246568CCA2808E21C9794"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:TRUE"
-            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B761939E65994231BFCE4C10060DDD25"
@@ -366,6 +335,37 @@
             "Register" = "3:1"
             "Exclude" = "11:TRUE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E82474569B1E1B8C3FB9DB3825EEFF1A"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:Microsoft.VisualStudio.TestPlatform.ObjectModel, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_E82474569B1E1B8C3FB9DB3825EEFF1A"
+                    {
+                    "Name" = "8:Microsoft.VisualStudio.TestPlatform.ObjectModel.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:Microsoft.VisualStudio.TestPlatform.ObjectModel.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_6136004A094246568CCA2808E21C9794"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F816659AF4CB7518710BBF782A2A7139"

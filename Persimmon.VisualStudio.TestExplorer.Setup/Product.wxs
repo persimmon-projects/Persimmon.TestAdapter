@@ -1,59 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:VSExtension="http://schemas.microsoft.com/wix/VSExtension">
-    <Product Id="*" Name="Persimmon.VisualStudio.TestExplorer" Language="1033" Version="1.0.0.0" Manufacturer="persimmon-projects" UpgradeCode="bd297a94-3654-4aa2-9694-e872ac9f1618">
-        <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+  <Product Id="*" Name="Persimmon.VisualStudio.TestExplorer" Language="1033" Version="1.0.0.0" Manufacturer="persimmon-projects" UpgradeCode="bd297a94-3654-4aa2-9694-e872ac9f1618">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
-        <PropertyRef Id="VS2013DEVENV"/>
-        <PropertyRef Id="VS2015DEVENV"/>
+    <PropertyRef Id="VS2013DEVENV"/>
+    <PropertyRef Id="VS2015DEVENV"/>
 
-        <UIRef Id="WixUI_Minimal" />
-        <WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />
-        
-        <Condition Message="Microsoft Visual Studio 2013 and/or 2015 is not installed. It is mandatory in order to install this product.">
-            <![CDATA[Installed OR VS2013DEVENV OR VS2015DEVENV]]>
-        </Condition>
-        
-        <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-        <MediaTemplate EmbedCab="yes" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\LICENSE.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\background.bmp" />
+    <Property Id="ARPPRODUCTICON" Value="persimmon.ico" />
+    <Icon Id="persimmon.ico" SourceFile="$(var.SolutionDir)/persimmon.ico"/>
+    
+    <UIRef Id="WixUI_Minimal" />
 
-        <Feature Id="ProductFeature" Title="Persimmon.VisualStudio.TestExplorer.Setup" Level="1">
-            <ComponentGroupRef Id="ProductComponents" />
-        </Feature>
-    </Product>
+    <Condition Message="Microsoft Visual Studio 2013 and/or 2015 is not installed. It is mandatory in order to install this product.">
+      <![CDATA[VS2013DEVENV OR VS2015DEVENV]]>
+    </Condition>
 
-    <Fragment>
-        <Directory Id="TARGETDIR" Name="SourceDir">
-            <Directory Id="ProgramFilesFolder">
-                <Directory Id="INSTALLFOLDER" Name="Persimmon.VisualStudio.TestExplorer.Setup" />
-            </Directory>
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature
+        Id="ProductFeature"
+        Title="Persimmon.VisualStudio.TestExplorer"
+        Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+    </Feature>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="PersimmonFolder" Name="Persimmon">
+          <Directory Id="INSTALLFOLDER" Name="VisualStudio.TestExplorer" />
         </Directory>
-    </Fragment>
+      </Directory>
+    </Directory>
+  </Fragment>
 
-    <Fragment>
-        <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-            <Component Id="C.Persimmon.VisualStudio.TestExplorer.2013" Guid="DA36B40E-CF11-4314-B34F-9FA42B043096">
-                <Condition><![CDATA[VS2013DEVENV AND (NOT VS2015DEVENV)]]></Condition>
-                <VSExtension:VsixPackage File="F.Persimmon.VisualStudio.TestExplorer.vsix.2013"
-                                         PackageId="Persimmon.VisualStudio.TestExplorer.8022813b-6e6b-4973-864d-f5b53b2a3c23"
-                                         Target="professional" TargetVersion="12.0" Vital="yes" Permanent="no"/>
-                <File Id="F.Persimmon.VisualStudio.TestExplorer.vsix.2013" Name="Persimmon.VisualStudio.TestExplorer.vsix"
-                      Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestExplorer\bin\$(var.Persimmon.VisualStudio.TestExplorer.Configuration)\Persimmon.VisualStudio.TestExplorer.vsix"/>
-                <File Id="F.Persimmon.VisualStudio.TestRunner.dll.2013" Name="Persimmon.VisualStudio.TestRunner.dll"
-                      Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestRunner\bin\$(var.Persimmon.VisualStudio.TestRunner.Configuration)\Persimmon.VisualStudio.TestRunner.dll"
-                      KeyPath="yes" Assembly=".net"/>
-            </Component>
-            <Component Id="C.Persimmon.VisualStudio.TestExplorer.2015" Guid="10E9037B-3B5D-4440-B6D3-A2EAC69C5D52">
-                <Condition><![CDATA[(NOT VS2013DEVENV) AND VS2015DEVENV]]></Condition>
-                <VSExtension:VsixPackage File="F.Persimmon.VisualStudio.TestExplorer.vsix.2015"
-                                         PackageId="Persimmon.VisualStudio.TestExplorer.8022813b-6e6b-4973-864d-f5b53b2a3c23"
-                                         Target="professional" TargetVersion="14.0" Vital="yes" Permanent="no"/>
-                <File Id="F.Persimmon.VisualStudio.TestExplorer.vsix.2015" Name="Persimmon.VisualStudio.TestExplorer.vsix"
-                      Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestExplorer\bin\$(var.Persimmon.VisualStudio.TestExplorer.Configuration)\Persimmon.VisualStudio.TestExplorer.vsix"/>
-                <File Id="F.Persimmon.VisualStudio.TestRunner.dll.2015" Name="Persimmon.VisualStudio.TestRunner.dll"
-                      Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestRunner\bin\$(var.Persimmon.VisualStudio.TestRunner.Configuration)\Persimmon.VisualStudio.TestRunner.dll"
-                      KeyPath="yes" Assembly=".net"/>
-            </Component>
-        </ComponentGroup>
-    </Fragment>
+  <Fragment>
+    <ComponentGroup Id="ProductComponents">
+      <Component
+          Id="C.Persimmon.VisualStudio.TestExplorer"
+          Guid="DA36B40E-CF11-4314-B34F-9FA42B043096"
+          Directory="INSTALLFOLDER">
+        <File Id="F.Persimmon.VisualStudio.TestExplorer.vsix" Name="Persimmon.VisualStudio.TestExplorer.vsix"
+            Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestExplorer\bin\$(var.Persimmon.VisualStudio.TestExplorer.Configuration)\Persimmon.VisualStudio.TestExplorer.vsix" />
+        <File Id="F.Persimmon.VisualStudio.TestRunner.dll" Name="Persimmon.VisualStudio.TestRunner.dll"
+            Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestRunner\bin\$(var.Persimmon.VisualStudio.TestRunner.Configuration)\Persimmon.VisualStudio.TestRunner.dll"
+            KeyPath="yes"
+            Assembly=".net"/>
+        <VSExtension:VsixPackage
+            File="F.Persimmon.VisualStudio.TestExplorer.vsix"
+            PackageId="c35f7015-465a-456a-801e-210ab907210d"
+            Vital="yes"
+            Permanent="no"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
 </Wix>

@@ -27,6 +27,10 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Persimmon.VisualStudio.Test
 		{4F2D32B2-0CC1-48E2-A186-81188BEB2A64} = {4F2D32B2-0CC1-48E2-A186-81188BEB2A64}
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Persimmon.VisualStudio.TestExplorer.Setup.IP", "Persimmon.VisualStudio.TestExplorer.Setup.IP\Persimmon.VisualStudio.TestExplorer.Setup.IP.vdproj", "{D842F70E-9D93-480C-B261-B345A0EBF619}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persimmon.VisualStudio.TestExplorer.Setup.Helper", "Persimmon.VisualStudio.TestExplorer.Setup.Helper\Persimmon.VisualStudio.TestExplorer.Setup.Helper.csproj", "{DB5C728A-3528-403E-8D4E-0A49FFCCAB05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,10 @@ Global
 		{B64D7678-C82B-4CBD-896A-525E3CE03C97}.Debug|Any CPU.Build.0 = Debug|x86
 		{B64D7678-C82B-4CBD-896A-525E3CE03C97}.Release|Any CPU.ActiveCfg = Release|x86
 		{B64D7678-C82B-4CBD-896A-525E3CE03C97}.Release|Any CPU.Build.0 = Release|x86
+		{D842F70E-9D93-480C-B261-B345A0EBF619}.Debug|Any CPU.ActiveCfg = Debug
+		{D842F70E-9D93-480C-B261-B345A0EBF619}.Release|Any CPU.ActiveCfg = Release
+		{DB5C728A-3528-403E-8D4E-0A49FFCCAB05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB5C728A-3528-403E-8D4E-0A49FFCCAB05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
