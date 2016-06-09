@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
-MinimumVisualStudioVersion = 10.0.40219.1
+MinimumVisualStudioVersion = 12.0.0.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6C103690-C369-475A-9B96-2CB9E4AEE4E3}"
 	ProjectSection(SolutionItems) = preProject
 		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
@@ -10,24 +10,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		persimmon.ico = persimmon.ico
 		Persimmon.VisualStudio.TestExplorer.snk = Persimmon.VisualStudio.TestExplorer.snk
 		README.md = README.md
-		SymbolMatching.md = SymbolMatching.md
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BC7C2940-E863-40D4-881E-6421622969B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persimmon.VisualStudio.TestRunner", "Persimmon.VisualStudio.TestRunner\Persimmon.VisualStudio.TestRunner.csproj", "{E7226D5A-7306-41D2-8A30-435728FD604B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persimmon.VisualStudio.TestExplorer", "Persimmon.VisualStudio.TestExplorer\Persimmon.VisualStudio.TestExplorer.csproj", "{4F2D32B2-0CC1-48E2-A186-81188BEB2A64}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BC7C2940-E863-40D4-881E-6421622969B5}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Persimmon.VisualStudio.TestDiscoverer", "Persimmon.VisualStudio.TestDiscoverer\Persimmon.VisualStudio.TestDiscoverer.fsproj", "{75D1134F-99B0-4753-8481-D241DC314C73}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Persimmon.VisualStudio.TestExplorer.Setup", "Persimmon.VisualStudio.TestExplorer.Setup\Persimmon.VisualStudio.TestExplorer.Setup.vdproj", "{E0632A12-23CD-4F11-8CBB-7945848F6290}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Persimmon.VisualStudio.TestExplorer.Setup", "Persimmon.VisualStudio.TestExplorer.Setup\Persimmon.VisualStudio.TestExplorer.Setup.wixproj", "{B64D7678-C82B-4CBD-896A-525E3CE03C97}"
 	ProjectSection(ProjectDependencies) = postProject
-		{75D1134F-99B0-4753-8481-D241DC314C73} = {75D1134F-99B0-4753-8481-D241DC314C73}
+		{E7226D5A-7306-41D2-8A30-435728FD604B} = {E7226D5A-7306-41D2-8A30-435728FD604B}
 		{4F2D32B2-0CC1-48E2-A186-81188BEB2A64} = {4F2D32B2-0CC1-48E2-A186-81188BEB2A64}
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persimmon.VisualStudio.TestExplorer.Setup.Helper", "Persimmon.VisualStudio.TestExplorer.Setup.Helper\Persimmon.VisualStudio.TestExplorer.Setup.Helper.csproj", "{DB5C728A-3528-403E-8D4E-0A49FFCCAB05}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,12 +44,10 @@ Global
 		{75D1134F-99B0-4753-8481-D241DC314C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75D1134F-99B0-4753-8481-D241DC314C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75D1134F-99B0-4753-8481-D241DC314C73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E0632A12-23CD-4F11-8CBB-7945848F6290}.Debug|Any CPU.ActiveCfg = Debug
-		{E0632A12-23CD-4F11-8CBB-7945848F6290}.Release|Any CPU.ActiveCfg = Release
-		{DB5C728A-3528-403E-8D4E-0A49FFCCAB05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB5C728A-3528-403E-8D4E-0A49FFCCAB05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB5C728A-3528-403E-8D4E-0A49FFCCAB05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB5C728A-3528-403E-8D4E-0A49FFCCAB05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B64D7678-C82B-4CBD-896A-525E3CE03C97}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B64D7678-C82B-4CBD-896A-525E3CE03C97}.Debug|Any CPU.Build.0 = Debug|x86
+		{B64D7678-C82B-4CBD-896A-525E3CE03C97}.Release|Any CPU.ActiveCfg = Release|x86
+		{B64D7678-C82B-4CBD-896A-525E3CE03C97}.Release|Any CPU.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

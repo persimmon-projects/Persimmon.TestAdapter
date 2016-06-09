@@ -15,7 +15,7 @@
     <MinimumVisualStudioVersion>12.0</MinimumVisualStudioVersion>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <OldToolsVersion>12.0</OldToolsVersion>
+    <OldToolsVersion>4.0</OldToolsVersion>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
     <GeneratePkgDefFile>false</GeneratePkgDefFile>
@@ -29,6 +29,10 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\Persimmon.VisualStudio.TestExplorer.snk</AssemblyOriginatorKeyFile>
     <NuGetPackageImportStamp>225261c9</NuGetPackageImportStamp>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,15 +69,15 @@
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.10.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.11.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Interop.12.0" />
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.ObjectModel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>$(MSBuildProgramFiles32)\Microsoft Visual Studio $(VisualStudioVersion)\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.VisualStudio.TextManager.Interop" />
     <Reference Include="Microsoft.VisualStudio.Shell.12.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.10.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.11.0" />
     <Reference Include="Microsoft.VisualStudio.Shell.Immutable.12.0" />
-    <Reference Include="Microsoft.VisualStudio.TestPlatform.ObjectModel">
-      <HintPath>$(MSBuildProgramFiles32)\Microsoft Visual Studio $(VisualStudioVersion)\Common7\IDE\CommonExtensions\Microsoft\TestWindow\Microsoft.VisualStudio.TestPlatform.ObjectModel.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="stdole, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
