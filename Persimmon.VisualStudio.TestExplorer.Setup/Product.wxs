@@ -5,10 +5,19 @@
       Id="*"
       Name="Persimmon.VisualStudio.TestExplorer"
       Language="1033"
-      Version="1.0.0.0"
+      Version="0.9.2"
       Manufacturer="persimmon-projects"
       UpgradeCode="bd297a94-3654-4aa2-9694-e872ac9f1618">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <Package
+        Id="*"
+        InstallerVersion="200"
+        Compressed="yes"
+        InstallScope="perMachine"
+        Description="Persimmon 2.0 drive on the Visual Studio test explorer."
+        Comments="Persimmon 2.0 drive on the Visual Studio 2013/2015 test explorer."
+        Keywords="persimmon, FSharp, Unit Testing, Testing, Test explorer, Test adapter"
+        Manufacturer="persimmon-projects" />
 
     <PropertyRef Id="VS2013DEVENV"/>
     <PropertyRef Id="VS2015DEVENV"/>
@@ -16,8 +25,10 @@
     <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\LICENSE.rtf" />
     <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\background.bmp" />
-    <Property Id="ARPPRODUCTICON" Value="persimmon.ico" />
-    <Icon Id="persimmon.ico" SourceFile="$(var.SolutionDir)/persimmon.ico"/>
+
+    <Property Id="ARPHELPLINK" Value="http://persimmon-projects.github.io/Persimmon/" />
+    <Property Id="ARPPRODUCTICON" Value="Icon.exe" />
+    <Icon Id="Icon.exe" SourceFile="$(var.SolutionDir)/persimmon.ico"/>
     
     <UIRef Id="WixUI_Minimal" />
 

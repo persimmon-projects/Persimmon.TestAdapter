@@ -1,10 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="c35f7015-465a-456a-801e-210ab907210d" Version="1.0.0" Language="en-US" Publisher="persimmon-projects" />
+    <Identity
+      Id="c35f7015-465a-456a-801e-210ab907210d"
+      Version="0.9.2"
+      Language="en-US"
+      Publisher="persimmon-projects" />
     <DisplayName>Persimmon.VisualStudio.TestExplorer</DisplayName>
-    <Description xml:space="preserve">Visual Studio test explorer adapter for Persimmon.</Description>
-    <MoreInfo>https://github.com/persimmon-projects/Persimmon.VisualStudio.TestExplorer</MoreInfo>
+    <Description xml:space="preserve">Persimmon 2.0 drive on the Visual Studio test explorer.</Description>
+    <MoreInfo>http://persimmon-projects.github.io/Persimmon/</MoreInfo>
     <License>LICENSE.txt</License>
     <Icon>persimmon.ico</Icon>
     <Tags>persimmon, FSharp, Unit Testing, Testing, Test explorer, Test adapter</Tags>

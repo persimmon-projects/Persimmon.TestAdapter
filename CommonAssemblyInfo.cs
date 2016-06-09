@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 
 [assembly: AssemblyCompany("persimmon-projects")]
-[assembly: AssemblyProduct("Persimmon")]
+[assembly: AssemblyProduct("Persimmon 2.0")]
 [assembly: AssemblyCopyright("Copyright (c) 2016 persimmon-projects")]
 [assembly: AssemblyTrademark("Persimmon")]
 
