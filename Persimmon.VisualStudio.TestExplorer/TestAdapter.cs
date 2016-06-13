@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,6 +25,11 @@ namespace Persimmon.VisualStudio.TestExplorer
     public sealed class TestAdapter : ITestDiscoverer, ITestExecutor
     {
         #region Fields
+        private static readonly HashSet<string> excludeAssemblies_ =
+            new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+            {
+                "Persimmon", "Persimmon.Runner", "Persimmon.Console", "Persimmon.Script", "Persimmon.Sample"
+            };
         private static readonly object lock_ = new object();
         private static bool ready_;
 
@@ -67,14 +73,17 @@ namespace Persimmon.VisualStudio.TestExplorer
                 var testExecutor = new TestExecutor();
                 var sink = new TestDiscoverySink(discoveryContext, logger, discoverySink);
 
+                var filteredSources =
+                    sources.Where(path => !excludeAssemblies_.Contains(Path.GetFileNameWithoutExtension(path)));
+
 #if false
-                foreach (var task in sources.Select(
+                foreach (var task in filteredSources.Select(
                     targetAssemblyPath => testExecutor.DiscoverAsync(targetAssemblyPath, sink)))
                 {
                     await task;
                 }
 #else
-                await Task.WhenAll(sources.Select(
+                await Task.WhenAll(filteredSources.Select(
                     targetAssemblyPath => testExecutor.DiscoverAsync(targetAssemblyPath, sink)));
 #endif
             }
@@ -127,12 +136,15 @@ namespace Persimmon.VisualStudio.TestExplorer
                 var testExecutor = new TestExecutor();
                 var sink = new TestRunSink(runContext, frameworkHandle);
 
+                var filteredSources =
+                    sources.Where(path => !excludeAssemblies_.Contains(Path.GetFileNameWithoutExtension(path)));
+
                 // Register cancellation token.
                 var cts = new CancellationTokenSource();
                 cancellationTokens_.Enqueue(cts);
 
                 // Start tests.
-                await Task.WhenAll(sources.Select(targetAssemblyPath =>
+                await Task.WhenAll(filteredSources.Select(targetAssemblyPath =>
                     testExecutor.RunAsync(targetAssemblyPath, new TestCase[0], sink, cts.Token)));
             }
             catch (Exception ex)
