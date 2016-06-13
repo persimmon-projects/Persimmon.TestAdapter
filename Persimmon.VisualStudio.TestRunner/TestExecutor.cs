@@ -138,6 +138,30 @@ namespace Persimmon.VisualStudio.TestRunner
             });
         }
 
+        #region SymbolInformationDistinctComparer
+        private sealed class SymbolInformationDistinctComparer : IEqualityComparer<SymbolInformation>
+        {
+            public bool Equals(SymbolInformation x, SymbolInformation y)
+            {
+                return
+                    x.SymbolName.Equals(y.SymbolName) &&
+                    x.FileName.Equals(y.FileName) &&
+                    x.MinLineNumber.Equals(y.MinLineNumber) &&
+                    x.MinColumnNumber.Equals(y.MinColumnNumber) &&
+                    x.MaxLineNumber.Equals(y.MaxLineNumber) &&
+                    x.MaxColumnNumber.Equals(y.MaxColumnNumber);
+            }
+
+            public int GetHashCode(SymbolInformation obj)
+            {
+                return
+                    obj.SymbolName.GetHashCode() ^
+                    obj.FileName.GetHashCode() ^
+                    obj.MinLineNumber.GetHashCode();
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Test execute target assembly.
         /// </summary>
@@ -157,15 +181,42 @@ namespace Persimmon.VisualStudio.TestRunner
                 testDiscovererPath_,
                 discoverer => discoverer.Discover(targetAssemblyPath));
 
-            var symbolDictionary = symbols.
+            // Take last item, most deepest information.
+            var grouped = symbols.
                 GroupBy(symbol => symbol.SymbolName).
-                ToDictionary(g => g.Key, g => g.First());
+                Select(g => new {
+                    Key = g.Key,
+                    Informations = g.Distinct(new SymbolInformationDistinctComparer())
+#if DEBUG
+                    .ToArray()
+#endif
+                })
+#if DEBUG
+                .ToArray()
+#endif
+                ;
+
+            var symbolDictionary = grouped.
+                ToDictionary(entry => entry.Key, entry => entry.Informations.Last());
 
 #if DEBUG
+            foreach (var entry in grouped.Where(entry => entry.Informations.Length >= 2))
+            {
+                Debug.WriteLine(string.Format(
+                    "Discover: Duplicate symbol: SymbolName={0}, Entries=[{1}]",
+                    entry.Key,
+                    string.Join(",", entry.Informations.Select(si => string.Format("{0}({1},{2})", Path.GetFileName(si.FileName), si.MinLineNumber, si.MinColumnNumber)))));
+            }
+
             var fileName = Path.GetFileName(targetAssemblyPath);
             foreach (var entry in symbolDictionary)
             {
-                Debug.WriteLine(string.Format("Discover: FileName={0}, SymbolName={1}", fileName, entry.Key));
+                Debug.WriteLine(string.Format(
+                    "Discover: FileName={0}, SymbolName={1}, Position={2},{3}",
+                    fileName,
+                    entry.Key,
+                    entry.Value.MinLineNumber,
+                    entry.Value.MinColumnNumber));
             }
 #endif
 
