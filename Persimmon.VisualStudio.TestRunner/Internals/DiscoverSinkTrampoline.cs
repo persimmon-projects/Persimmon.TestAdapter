@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-
+using System.IO;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
 namespace Persimmon.VisualStudio.TestRunner.Internals
@@ -52,6 +52,13 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             testCase.DisplayName = displayName;
             testCase.CodeFilePath = (symbol != null) ? symbol.FileName : null;
             testCase.LineNumber = (symbol != null) ? symbol.MinLineNumber : 0;
+
+            Debug.WriteLine(string.Format(
+                "DiscoverSinkTrampoline: FQTN={0}, DisplayName={1}, File={2}, Position={3}",
+                fullyQualifiedTestName,
+                displayName,
+                (testCase.CodeFilePath != null) ? Path.GetFileName(testCase.CodeFilePath) : "(null)",
+                testCase.LineNumber));
 
             parentSink_.Progress(testCase);
         }
