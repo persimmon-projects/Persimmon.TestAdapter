@@ -7,7 +7,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
     /// Source code symbol informations from TestDiscoverer.
     /// </summary>
     [Serializable]
-    public sealed class SymbolInformation
+    public sealed class SymbolInformation : IEquatable<SymbolInformation>
     {
         public readonly string SymbolName;
         public readonly string FileName;
@@ -39,6 +39,39 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             this.MaxLineNumber = maxLineNumber;
             this.MinColumnNumber = minColumnNumber;
             this.MaxColumnNumber = maxColumnNumber;
+        }
+
+        /// <summary>
+        /// Is instance equals.
+        /// </summary>
+        /// <param name="other">Other instance</param>
+        /// <returns>True if equal.</returns>
+        public bool Equals(SymbolInformation other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            return
+                this.SymbolName.Equals(other.SymbolName) &&
+                this.FileName.ToLowerInvariant().Equals(other.FileName.ToLowerInvariant()) &&
+                this.MinLineNumber.Equals(other.MinLineNumber) &&
+                this.MinColumnNumber.Equals(other.MinColumnNumber) &&
+                this.MaxLineNumber.Equals(other.MaxLineNumber) &&
+                this.MaxColumnNumber.Equals(other.MaxColumnNumber);
+        }
+
+        /// <summary>
+        /// Get hash code.
+        /// </summary>
+        /// <returns>Hash code</returns>
+        public override int GetHashCode()
+        {
+            return
+                this.SymbolName.GetHashCode() ^
+                this.FileName.ToLowerInvariant().GetHashCode() ^
+                this.MinLineNumber.GetHashCode();
         }
 
         /// <summary>

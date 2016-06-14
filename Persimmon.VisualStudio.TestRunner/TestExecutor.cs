@@ -183,29 +183,22 @@ namespace Persimmon.VisualStudio.TestRunner
 
             // Take last item, most deepest information.
             var grouped = symbols.
-                GroupBy(symbol => symbol.SymbolName).
-                Select(g => new {
-                    Key = g.Key,
-                    Informations = g.Distinct(new SymbolInformationDistinctComparer())
-#if DEBUG
-                    .ToArray()
-#endif
-                })
+                GroupBy(symbol => symbol.SymbolName)
 #if DEBUG
                 .ToArray()
 #endif
                 ;
 
             var symbolDictionary = grouped.
-                ToDictionary(entry => entry.Key, entry => entry.Informations.Last());
+                ToDictionary(g => g.Key, g => g.Last());
 
 #if DEBUG
-            foreach (var entry in grouped.Where(entry => entry.Informations.Length >= 2))
+            foreach (var g in grouped.Where(g => g.Count() >= 2))
             {
                 Debug.WriteLine(string.Format(
                     "Discover: Duplicate symbol: SymbolName={0}, Entries=[{1}]",
-                    entry.Key,
-                    string.Join(",", entry.Informations.Select(si => string.Format("{0}({1},{2})", Path.GetFileName(si.FileName), si.MinLineNumber, si.MinColumnNumber)))));
+                    g.Key,
+                    string.Join(",", g.Select(si => string.Format("{0}({1},{2})", Path.GetFileName(si.FileName), si.MinLineNumber, si.MinColumnNumber)))));
             }
 
             var fileName = Path.GetFileName(targetAssemblyPath);

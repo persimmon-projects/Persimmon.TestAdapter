@@ -3,6 +3,7 @@
 open System
 open System.Diagnostics
 open System.IO
+open System.Linq
 open Microsoft.FSharp.Compiler.Ast
 open Microsoft.FSharp.Compiler.Range
 open Microsoft.FSharp.Compiler.SourceCodeServices
@@ -237,8 +238,7 @@ type Discoverer() =
                      |> Seq.filter (fun opt -> opt.StartsWith("-") = false)
                      |> Seq.map (fun path -> asyncParseCode projOptions path)
                      |> Async.Parallel
-      return results
-             |> Seq.collect (fun result -> result)
+      return (results |> Seq.collect (fun result -> result)).Distinct()
              |> Seq.toArray
     }
   
