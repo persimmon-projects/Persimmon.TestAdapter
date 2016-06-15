@@ -266,7 +266,10 @@ type Discoverer() =
       | _ as ex ->
         Trace.WriteLine(ex.ToString())
         async { return [||] }
-    | None -> async { return [||] }
+    | None -> async {
+      Trace.WriteLine("TestDiscoverer: Cannot found fsproj: AssemblyPath=\"" + targetAssemblyPath + "\"")
+      return [||]
+    }
   
   interface IDiscoverer with
     /// Discover and gather symbol informations synchronously.

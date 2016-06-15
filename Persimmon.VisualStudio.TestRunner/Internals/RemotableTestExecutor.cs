@@ -82,12 +82,13 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     var persimmonType = persimmonAssembly.GetType(persimmonTypeName);
                     if (persimmonType == null)
                     {
-                        sinkTrampoline.Message(
-                            true,
-                            string.Format(
-                                "Persimmon.VisualStudio.TestRunner: Cannot found required type (May be mismatched persimmon version) : TargetPath=\"{0}\", PersimmonPath=\"{1}\"",
-                                targetAssemblyPath,
-                                new Uri(persimmonAssembly.CodeBase).LocalPath));
+                        var message = string.Format(
+                            "Persimmon.VisualStudio.TestRunner: Cannot found required type (May be mismatched persimmon version) : TargetPath=\"{0}\", PersimmonPath=\"{1}\"",
+                            targetAssemblyPath,
+                            new Uri(persimmonAssembly.CodeBase).LocalPath);
+
+                        Trace.WriteLine(message);
+                        sinkTrampoline.Message(true, message);
                     }
                     else
                     {
