@@ -3,7 +3,7 @@
   <Metadata>
     <Identity
       Id="c35f7015-465a-456a-801e-210ab907210d"
-      Version="0.9.4"
+      Version="0.9.5"
       Language="en-US"
       Publisher="persimmon-projects" />
     <DisplayName>Persimmon.VisualStudio.TestExplorer</DisplayName>

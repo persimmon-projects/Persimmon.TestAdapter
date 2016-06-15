@@ -8,6 +8,8 @@ namespace Persimmon.VisualStudio.TestRunner
 
         void Begin(string message);
 
+        void Message(bool isError, string message);
+
         void Finished(string message);
     }
 }

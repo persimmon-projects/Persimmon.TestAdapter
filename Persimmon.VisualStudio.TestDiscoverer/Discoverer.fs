@@ -209,13 +209,16 @@ module private DiscovererImpl =
 type Discoverer() = 
   inherit MarshalByRefObject()
   
-  let rec traverseFsprojRecursive basePath fsprojName = 
-    let fsprojPath = Path.Combine(basePath, fsprojName)
-    match File.Exists fsprojPath with
-    | true -> fsprojPath
-    | false -> 
-      let parentPath = Path.GetDirectoryName basePath
-      traverseFsprojRecursive parentPath fsprojName
+  let rec traverseFsprojRecursive basePath fsprojName =
+    match basePath with
+    | null -> None
+    | _ ->
+      let fsprojPath = Path.Combine(basePath, fsprojName)
+      match File.Exists fsprojPath with
+      | true -> Some fsprojPath
+      | false -> 
+        let parentPath = Path.GetDirectoryName basePath
+        traverseFsprojRecursive parentPath fsprojName
   
   let traverseFsproj assemblyPath = 
     let basePath = Path.GetDirectoryName assemblyPath
@@ -224,29 +227,46 @@ type Discoverer() =
   
   let asyncParseCode projOptions path : Async<SymbolInformation []> = 
     async { 
-      let checker = FSharpChecker.Create()
-      let sourceCodeText = File.ReadAllText(path)
-      let! results = checker.ParseFileInProject(path, sourceCodeText, projOptions)
-      return DiscovererImpl.visitTreeRoot results |> Seq.toArray
+      try
+        let checker = FSharpChecker.Create()
+        let sourceCodeText = File.ReadAllText(path)
+        let! results = checker.ParseFileInProject(path, sourceCodeText, projOptions)
+        return DiscovererImpl.visitTreeRoot results |> Seq.toArray
+      with
+      | _ as ex ->
+        Trace.WriteLine(ex.ToString())
+        return [||]
     }
   
   let asyncParseCodes projOptions : Async<SymbolInformation []> = 
     async { 
-      // TODO: ProjectCracker cannot retrieve source code file paths,
-      //   try improvement ProjectCracker and send PR? :)
-      let! results = projOptions.OtherOptions
-                     |> Seq.filter (fun opt -> opt.StartsWith("-") = false)
-                     |> Seq.map (fun path -> asyncParseCode projOptions path)
-                     |> Async.Parallel
-      return (results |> Seq.collect (fun result -> result)).Distinct()
-             |> Seq.toArray
+      try
+        // TODO: ProjectCracker cannot retrieve source code file paths,
+        //   try improvement ProjectCracker and send PR? :)
+        let! results = projOptions.OtherOptions
+                       |> Seq.filter (fun opt -> opt.StartsWith("-") = false)
+                       |> Seq.map (fun path -> asyncParseCode projOptions path)
+                       |> Async.Parallel
+        return (results |> Seq.collect (fun result -> result)).Distinct()
+               |> Seq.toArray
+      with
+      | _ as ex ->
+        Trace.WriteLine(ex.ToString())
+        return [||]
     }
   
   /// Discover and gather symbol informations.
   member __.AsyncDiscover targetAssemblyPath : Async<SymbolInformation []> = 
-    let fsprojPath = traverseFsproj targetAssemblyPath
-    let projOptions = ProjectCracker.GetProjectOptionsFromProjectFile fsprojPath
-    asyncParseCodes projOptions
+    match traverseFsproj targetAssemblyPath with
+    | Some fsprojPath ->
+      try
+        let projOptions = ProjectCracker.GetProjectOptionsFromProjectFile fsprojPath
+        asyncParseCodes projOptions
+      with
+      | _ as ex ->
+        Trace.WriteLine(ex.ToString())
+        async { return [||] }
+    | None -> async { return [||] }
   
   interface IDiscoverer with
     /// Discover and gather symbol informations synchronously.

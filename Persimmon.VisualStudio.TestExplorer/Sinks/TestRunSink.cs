@@ -32,6 +32,13 @@ namespace Persimmon.VisualStudio.TestExplorer.Sinks
                 string.Format("Begin tests: Path={0}", message));
         }
 
+        public void Message(bool isError, string message)
+        {
+            frameworkHandle_.SendMessage(
+                isError ? TestMessageLevel.Error : TestMessageLevel.Informational,
+                message);
+        }
+
         public void Progress(TestResult testResult)
         {
             frameworkHandle_.RecordResult(testResult);

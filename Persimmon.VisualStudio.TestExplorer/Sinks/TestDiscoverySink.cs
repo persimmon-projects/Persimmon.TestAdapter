@@ -35,6 +35,13 @@ namespace Persimmon.VisualStudio.TestExplorer.Sinks
                 string.Format("Begin discovery: Path={0}", message));
         }
 
+        public void Message(bool isError, string message)
+        {
+            logger_.SendMessage(
+                isError ? TestMessageLevel.Error : TestMessageLevel.Informational,
+                message);
+        }
+
         public void Progress(TestCase testCase)
         {
             discoverySink_.SendTestCase(testCase);

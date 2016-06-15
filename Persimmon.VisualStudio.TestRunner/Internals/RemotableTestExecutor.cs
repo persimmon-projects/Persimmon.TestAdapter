@@ -54,33 +54,52 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             Debug.Assert(
                 Path.GetDirectoryName(targetAssemblyPath) == AppDomain.CurrentDomain.BaseDirectory);
 
-            // 1. pre-load target assembly and analyze fully-qualified assembly name.
-            //   --> Assebly.ReflectionOnlyLoadFrom() is load assembly into reflection-only context.
-            var preLoadAssembly = Assembly.ReflectionOnlyLoadFrom(targetAssemblyPath);
-            var assemblyFullName = preLoadAssembly.FullName;
-
-            // 2. load assembly by fully-qualified assembly name.
-            //   --> Assembly.Load() is load assembly into "default context."
-            //   --> Failed if current AppDomain.ApplicationBase folder is not target assembly path.
-            var testAssembly = Assembly.Load(assemblyFullName);
-
             sinkTrampoline.Begin(targetAssemblyPath);
 
-            // 3. extract Persimmon assembly name via test assembly,
-            var persimmonFullAssemblyName = testAssembly.GetReferencedAssemblies().
-                FirstOrDefault(assembly => assembly.Name == persimmonPartialAssemblyName);
-            if (persimmonFullAssemblyName != null)
+            try
             {
-                //   and load persimmon assembly.
-                var persimmonAssembly = Assembly.Load(persimmonFullAssemblyName);
+                // 1. pre-load target assembly and analyze fully-qualified assembly name.
+                //   --> Assebly.ReflectionOnlyLoadFrom() is load assembly into reflection-only context.
+                var preLoadAssembly = Assembly.ReflectionOnlyLoadFrom(targetAssemblyPath);
+                var assemblyFullName = preLoadAssembly.FullName;
 
-                // 4. Instantiate TestCollector/TestRunner class (by dynamic), and do action.
-                //   --> Because TestCollector/TestRunner class containing assembly version is unknown,
-                //       so this TestRunner assembly can't statically refering The Persimmon assembly...
-                var persimmonType = persimmonAssembly.GetType(persimmonTypeName);
-                dynamic persimmonInstance = Activator.CreateInstance(persimmonType);
+                // 2. load assembly by fully-qualified assembly name.
+                //   --> Assembly.Load() is load assembly into "default context."
+                //   --> Failed if current AppDomain.ApplicationBase folder is not target assembly path.
+                var testAssembly = Assembly.Load(assemblyFullName);
 
-                rawAction(persimmonInstance, testAssembly);
+                // 3. extract Persimmon assembly name via test assembly,
+                var persimmonFullAssemblyName = testAssembly.GetReferencedAssemblies().
+                    FirstOrDefault(assembly => assembly.Name == persimmonPartialAssemblyName);
+                if (persimmonFullAssemblyName != null)
+                {
+                    //   and load persimmon assembly.
+                    var persimmonAssembly = Assembly.Load(persimmonFullAssemblyName);
+
+                    // 4. Instantiate TestCollector/TestRunner class (by dynamic), and do action.
+                    //   --> Because TestCollector/TestRunner class containing assembly version is unknown,
+                    //       so this TestRunner assembly can't statically refering The Persimmon assembly...
+                    var persimmonType = persimmonAssembly.GetType(persimmonTypeName);
+                    if (persimmonType == null)
+                    {
+                        sinkTrampoline.Message(
+                            true,
+                            string.Format(
+                                "Persimmon.VisualStudio.TestRunner: Cannot found required type (May be mismatched persimmon version) : TargetPath=\"{0}\", PersimmonPath=\"{1}\"",
+                                targetAssemblyPath,
+                                new Uri(persimmonAssembly.CodeBase).LocalPath));
+                    }
+                    else
+                    {
+                        dynamic persimmonInstance = Activator.CreateInstance(persimmonType);
+                        rawAction(persimmonInstance, testAssembly);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex.ToString());
+                sinkTrampoline.Message(true, ex.Message);
             }
 
             sinkTrampoline.Finished(targetAssemblyPath);

@@ -29,6 +29,11 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             parentSink_.Begin(message);
         }
 
+        public void Message(bool isError, string message)
+        {
+            parentSink_.Message(isError, message);
+        }
+
         public void Progress(dynamic[] args)
         {
             string fullyQualifiedTestName = args[0];

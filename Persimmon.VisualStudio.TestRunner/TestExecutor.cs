@@ -138,30 +138,6 @@ namespace Persimmon.VisualStudio.TestRunner
             });
         }
 
-        #region SymbolInformationDistinctComparer
-        private sealed class SymbolInformationDistinctComparer : IEqualityComparer<SymbolInformation>
-        {
-            public bool Equals(SymbolInformation x, SymbolInformation y)
-            {
-                return
-                    x.SymbolName.Equals(y.SymbolName) &&
-                    x.FileName.Equals(y.FileName) &&
-                    x.MinLineNumber.Equals(y.MinLineNumber) &&
-                    x.MinColumnNumber.Equals(y.MinColumnNumber) &&
-                    x.MaxLineNumber.Equals(y.MaxLineNumber) &&
-                    x.MaxColumnNumber.Equals(y.MaxColumnNumber);
-            }
-
-            public int GetHashCode(SymbolInformation obj)
-            {
-                return
-                    obj.SymbolName.GetHashCode() ^
-                    obj.FileName.GetHashCode() ^
-                    obj.MinLineNumber.GetHashCode();
-            }
-        }
-        #endregion
-
         /// <summary>
         /// Test execute target assembly.
         /// </summary>
@@ -174,57 +150,65 @@ namespace Persimmon.VisualStudio.TestRunner
             Debug.Assert(!string.IsNullOrWhiteSpace(targetAssemblyPath));
             Debug.Assert(sink != null);
 
-            // Step1: Parse F# source code and discover AST tree, retreive symbol informations.
-            var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
-                testDiscovererPath_,
-                testDiscovererTypeName_,
-                testDiscovererPath_,
-                discoverer => discoverer.Discover(targetAssemblyPath));
-
-            // Take last item, most deepest information.
-            var grouped = symbols.
-                GroupBy(symbol => symbol.SymbolName)
-#if DEBUG
-                .ToArray()
-#endif
-                ;
-
-            var symbolDictionary = grouped.
-                ToDictionary(g => g.Key, g => g.Last());
-
-#if DEBUG
-            foreach (var g in grouped.Where(g => g.Count() >= 2))
+            try
             {
-                Debug.WriteLine(string.Format(
-                    "Discover: Duplicate symbol: SymbolName={0}, Entries=[{1}]",
-                    g.Key,
-                    string.Join(",", g.Select(si => string.Format("{0}({1},{2})", Path.GetFileName(si.FileName), si.MinLineNumber, si.MinColumnNumber)))));
-            }
+                // Step1: Parse F# source code and discover AST tree, retreive symbol informations.
+                var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
+                    testDiscovererPath_,
+                    testDiscovererTypeName_,
+                    testDiscovererPath_,
+                    discoverer => discoverer.Discover(targetAssemblyPath));
 
-            var fileName = Path.GetFileName(targetAssemblyPath);
-            foreach (var entry in symbolDictionary)
-            {
-                Debug.WriteLine(string.Format(
-                    "Discover: FileName={0}, SymbolName={1}, Position={2},{3}",
-                    fileName,
-                    entry.Key,
-                    entry.Value.MinLineNumber,
-                    entry.Value.MinColumnNumber));
-            }
+                // Take last item, most deepest information.
+                var grouped = symbols.
+                    GroupBy(symbol => symbol.SymbolName)
+#if DEBUG
+                    .ToArray()
 #endif
+                    ;
 
-            // Step2: Traverse target test assembly, retreive test cases and push to Visual Studio.
-            await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
-                testRunnerAssemblyPath_,
-                typeof(RemotableTestExecutor).FullName,
-                targetAssemblyPath,
-                executor =>
+                var symbolDictionary = grouped.
+                    ToDictionary(g => g.Key, g => g.Last());
+
+#if DEBUG
+                foreach (var g in grouped.Where(g => g.Count() >= 2))
                 {
-                    executor.Discover(
-                        targetAssemblyPath,
-                        new DiscoverSinkTrampoline(targetAssemblyPath, sink, symbolDictionary));
-                    return true;
-                });
+                    Debug.WriteLine(string.Format(
+                        "Discover: Duplicate symbol: SymbolName={0}, Entries=[{1}]",
+                        g.Key,
+                        string.Join(",", g.Select(si => string.Format("{0}({1},{2})", Path.GetFileName(si.FileName), si.MinLineNumber, si.MinColumnNumber)))));
+                }
+
+                var fileName = Path.GetFileName(targetAssemblyPath);
+                foreach (var entry in symbolDictionary)
+                {
+                    Debug.WriteLine(string.Format(
+                        "Discover: FileName={0}, SymbolName={1}, Position={2},{3}",
+                        fileName,
+                        entry.Key,
+                        entry.Value.MinLineNumber,
+                        entry.Value.MinColumnNumber));
+                }
+#endif
+
+                // Step2: Traverse target test assembly, retreive test cases and push to Visual Studio.
+                await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
+                    testRunnerAssemblyPath_,
+                    typeof(RemotableTestExecutor).FullName,
+                    targetAssemblyPath,
+                    executor =>
+                    {
+                        executor.Discover(
+                            targetAssemblyPath,
+                            new DiscoverSinkTrampoline(targetAssemblyPath, sink, symbolDictionary));
+                        return true;
+                    });
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex.ToString());
+                sink.Message(true, ex.Message);
+            }
         }
 
         /// <summary>
@@ -245,22 +229,30 @@ namespace Persimmon.VisualStudio.TestRunner
             Debug.Assert(sink != null);
             Debug.Assert(token != null);
 
-            var fullyQualifiedTestNames = testCases.Select(testCase => testCase.FullyQualifiedName).ToArray();
-            var testCaseDicts = testCases.ToDictionary(testCase => testCase.FullyQualifiedName);
+            try
+            {
+                var fullyQualifiedTestNames = testCases.Select(testCase => testCase.FullyQualifiedName).ToArray();
+                var testCaseDicts = testCases.ToDictionary(testCase => testCase.FullyQualifiedName);
 
-            await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
-                testRunnerAssemblyPath_,
-                typeof(RemotableTestExecutor).FullName,
-                targetAssemblyPath,
-                executor =>
-                {
-                    executor.Run(
-                        targetAssemblyPath,
-                        fullyQualifiedTestNames,
-                        new RunSinkTrampoline(targetAssemblyPath, sink, testCaseDicts),
-                        token);
-                    return true;
-                });
+                await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
+                    testRunnerAssemblyPath_,
+                    typeof(RemotableTestExecutor).FullName,
+                    targetAssemblyPath,
+                    executor =>
+                    {
+                        executor.Run(
+                            targetAssemblyPath,
+                            fullyQualifiedTestNames,
+                            new RunSinkTrampoline(targetAssemblyPath, sink, testCaseDicts),
+                            token);
+                        return true;
+                    });
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine(ex.ToString());
+                sink.Message(true, ex.Message);
+            }
         }
     }
 }
