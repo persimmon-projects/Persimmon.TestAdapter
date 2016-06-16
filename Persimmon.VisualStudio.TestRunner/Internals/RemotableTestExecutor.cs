@@ -69,9 +69,11 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                 var testAssembly = Assembly.Load(assemblyFullName);
 
                 // 3. extract Persimmon assembly name via test assembly,
-                var persimmonFullAssemblyName = testAssembly.GetReferencedAssemblies().
-                    FirstOrDefault(assembly => assembly.Name == persimmonPartialAssemblyName);
-                if (persimmonFullAssemblyName != null)
+                foreach (var persimmonFullAssemblyName in
+                    testAssembly.GetReferencedAssemblies().
+                        Where(assembly =>
+                            (assembly.Name == persimmonPartialAssemblyName) &&
+                            (assembly.GetPublicKeyToken() != null)))
                 {
                     //   and load persimmon assembly.
                     var persimmonAssembly = Assembly.Load(persimmonFullAssemblyName);
@@ -80,21 +82,21 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     //   --> Because TestCollector/TestRunner class containing assembly version is unknown,
                     //       so this TestRunner assembly can't statically refering The Persimmon assembly...
                     var persimmonType = persimmonAssembly.GetType(persimmonTypeName);
-                    if (persimmonType == null)
-                    {
-                        var message = string.Format(
-                            "Persimmon.VisualStudio.TestRunner: Cannot found required type (May be mismatched persimmon version) : TargetPath=\"{0}\", PersimmonPath=\"{1}\"",
-                            targetAssemblyPath,
-                            new Uri(persimmonAssembly.CodeBase).LocalPath);
-
-                        Trace.WriteLine(message);
-                        sinkTrampoline.Message(true, message);
-                    }
-                    else
+                    if (persimmonType != null)
                     {
                         dynamic persimmonInstance = Activator.CreateInstance(persimmonType);
                         rawAction(persimmonInstance, testAssembly);
+
+                        break;
                     }
+
+                    var message = string.Format(
+                        "Persimmon.VisualStudio.TestRunner: Cannot found required type (May be mismatched persimmon version) : TargetPath=\"{0}\", PersimmonPath=\"{1}\"",
+                        targetAssemblyPath,
+                        new Uri(persimmonAssembly.CodeBase).LocalPath);
+
+                    Trace.WriteLine(message);
+                    sinkTrampoline.Message(true, message);
                 }
             }
             catch (Exception ex)
