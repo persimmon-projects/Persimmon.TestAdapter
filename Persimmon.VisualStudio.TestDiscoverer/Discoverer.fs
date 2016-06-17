@@ -234,7 +234,7 @@ type Discoverer() =
         return DiscovererImpl.visitTreeRoot results |> Seq.toArray
       with
       | _ as ex ->
-        Trace.WriteLine(ex.ToString())
+        Trace.WriteLine("TestDiscoverer: " + ex.ToString())
         return [||]
     }
   
@@ -251,7 +251,7 @@ type Discoverer() =
                |> Seq.toArray
       with
       | _ as ex ->
-        Trace.WriteLine(ex.ToString())
+        Trace.WriteLine("TestDiscoverer: " + ex.ToString())
         return [||]
     }
   
@@ -264,7 +264,7 @@ type Discoverer() =
         asyncParseCodes projOptions
       with
       | _ as ex ->
-        Trace.WriteLine(ex.ToString())
+        Trace.WriteLine("TestDiscoverer: " + ex.ToString())
         async { return [||] }
     | None -> async {
       Trace.WriteLine("TestDiscoverer: Cannot found fsproj: AssemblyPath=\"" + targetAssemblyPath + "\"")

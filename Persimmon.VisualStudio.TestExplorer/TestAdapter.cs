@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
-
+using Microsoft.Win32;
 using Persimmon.VisualStudio.TestRunner;
 using Persimmon.VisualStudio.TestExplorer.Sinks;
 
@@ -38,19 +38,54 @@ namespace Persimmon.VisualStudio.TestExplorer
             new ConcurrentQueue<CancellationTokenSource>();
         #endregion
 
-        #region WaitingForAttachDebugger
-        [Conditional("DEBUG")]
-        private void WaitingForAttachDebugger()
+        #region WaitingForAttachDebuggerIfRequired
+        private static bool IsDebuggable(RegistryView view)
+        {
+            using (var hklmKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
+            {
+                var subKey = hklmKey.OpenSubKey(@"SOFTWARE\Persimmon\VisualStudio.TestExplorer", false);
+                if (subKey != null)
+                {
+                    using (var persimmonKey = subKey)
+                    {
+                        try
+                        {
+                            var value = Convert.ToInt32(persimmonKey.GetValue("Debug"));
+                            return value != 0;
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
+
+#if DEBUG
+            return true;
+#else
+            return false;
+#endif
+        }
+
+        private void WaitingForAttachDebuggerIfRequired()
         {
             lock (lock_)
             {
                 if (ready_ == false)
                 {
-                    NativeMethods.MessageBox(
-                        IntPtr.Zero,
-                        "Waiting for attach debugger ...",
-                        string.Format("Persimmon ({0})", Process.GetCurrentProcess().Id),
-                        NativeMethods.MessageBoxOptions.IconWarning | NativeMethods.MessageBoxOptions.OkOnly);
+                    var isDebuggable =
+                        IsDebuggable(RegistryView.Registry64) |
+                        IsDebuggable(RegistryView.Registry32);
+
+                    if (isDebuggable == true)
+                    {
+                        NativeMethods.MessageBox(
+                            IntPtr.Zero,
+                            "Waiting for attach debugger ...",
+                            string.Format("Persimmon ({0})", Process.GetCurrentProcess().Id),
+                            NativeMethods.MessageBoxOptions.IconWarning | NativeMethods.MessageBoxOptions.OkOnly);
+                    }
+
                     ready_ = true;
                 }
             }
@@ -114,7 +149,7 @@ namespace Persimmon.VisualStudio.TestExplorer
             IMessageLogger logger,
             ITestCaseDiscoverySink discoverySink)
         {
-            this.WaitingForAttachDebugger();
+            this.WaitingForAttachDebuggerIfRequired();
 
             this.DiscoverTestsAsync(sources, discoveryContext, logger, discoverySink).Wait();
         }
@@ -126,7 +161,7 @@ namespace Persimmon.VisualStudio.TestExplorer
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
-            this.WaitingForAttachDebugger();
+            this.WaitingForAttachDebuggerIfRequired();
 
             frameworkHandle.SendMessage(
                 TestMessageLevel.Informational,
@@ -172,7 +207,7 @@ namespace Persimmon.VisualStudio.TestExplorer
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
-            this.WaitingForAttachDebugger();
+            this.WaitingForAttachDebuggerIfRequired();
 
             this.RunTestsAsync(sources, runContext, frameworkHandle).Wait();
         }
@@ -226,7 +261,7 @@ namespace Persimmon.VisualStudio.TestExplorer
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
-            this.WaitingForAttachDebugger();
+            this.WaitingForAttachDebuggerIfRequired();
 
             this.RunTestsAsync(tests, runContext, frameworkHandle).Wait();
         }

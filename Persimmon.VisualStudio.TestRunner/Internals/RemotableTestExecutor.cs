@@ -101,8 +101,15 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             }
             catch (Exception ex)
             {
-                Trace.WriteLine(ex.ToString());
-                sinkTrampoline.Message(true, ex.Message);
+                var message = string.Format(
+                    "Persimmon.VisualStudio.TestRunner: {0}: Type={1} TargetPath=\"{2}\", StackTrace={3}",
+                    ex.Message,
+                    ex.GetType().FullName,
+                    targetAssemblyPath,
+                    ex.StackTrace);
+
+                Trace.WriteLine(message);
+                sinkTrampoline.Message(true, message);
             }
 
             sinkTrampoline.Finished(targetAssemblyPath);
