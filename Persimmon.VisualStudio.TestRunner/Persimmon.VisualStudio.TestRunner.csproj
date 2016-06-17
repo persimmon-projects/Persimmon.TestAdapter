@@ -61,6 +61,7 @@
     <Compile Include="Internals\DiscoverSinkTrampoline.cs" />
     <Compile Include="Internals\RemoteCancellationToken.cs" />
     <Compile Include="Internals\RunSinkTrampoline.cs" />
+    <Compile Include="Internals\StrongNameCollector.cs" />
     <Compile Include="Internals\SymbolInformation.cs" />
     <Compile Include="ITestDiscoverSink.cs" />
     <Compile Include="ITestSink.cs" />

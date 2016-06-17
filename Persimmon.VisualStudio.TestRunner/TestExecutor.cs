@@ -191,7 +191,14 @@ namespace Persimmon.VisualStudio.TestRunner
                 }
 #endif
 
-                // Step2: Traverse target test assembly, retreive test cases and push to Visual Studio.
+                // Step2: Preload and get target assembly full name.
+                var targetAssemblyFullName = await this.InternalExecuteAsync<StrongNameCollector, string>(
+                    testRunnerAssemblyPath_,
+                    typeof (StrongNameCollector).FullName,
+                    testRunnerAssemblyPath_,
+                    collector => collector.CollectFrom(targetAssemblyPath));
+
+                // Step3: Traverse target test assembly, retreive test cases and push to Visual Studio.
                 await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
                     testRunnerAssemblyPath_,
                     typeof(RemotableTestExecutor).FullName,
@@ -199,7 +206,7 @@ namespace Persimmon.VisualStudio.TestRunner
                     executor =>
                     {
                         executor.Discover(
-                            targetAssemblyPath,
+                            targetAssemblyFullName,
                             new DiscoverSinkTrampoline(targetAssemblyPath, sink, symbolDictionary));
                         return true;
                     });
@@ -234,6 +241,14 @@ namespace Persimmon.VisualStudio.TestRunner
                 var fullyQualifiedTestNames = testCases.Select(testCase => testCase.FullyQualifiedName).ToArray();
                 var testCaseDicts = testCases.ToDictionary(testCase => testCase.FullyQualifiedName);
 
+                // Step1: Preload and get target assembly full name.
+                var targetAssemblyFullName = await this.InternalExecuteAsync<StrongNameCollector, string>(
+                    testRunnerAssemblyPath_,
+                    typeof (StrongNameCollector).FullName,
+                    testRunnerAssemblyPath_,
+                    collector => collector.CollectFrom(targetAssemblyPath));
+
+                // Step2: Execute tests.
                 await this.InternalExecuteAsync<RemotableTestExecutor, bool>(
                     testRunnerAssemblyPath_,
                     typeof(RemotableTestExecutor).FullName,
@@ -241,7 +256,7 @@ namespace Persimmon.VisualStudio.TestRunner
                     executor =>
                     {
                         executor.Run(
-                            targetAssemblyPath,
+                            targetAssemblyFullName,
                             fullyQualifiedTestNames,
                             new RunSinkTrampoline(targetAssemblyPath, sink, testCaseDicts),
                             token);
