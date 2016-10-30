@@ -169,7 +169,7 @@ module private DiscovererImpl =
     seq { 
       for declaration in decls do
         match declaration with
-        | SynModuleDecl.NestedModule(cinfo, nestedDecls, _, _) -> 
+        | SynModuleDecl.NestedModule(cinfo, _, nestedDecls, _, _) -> 
           let (SynComponentInfo.ComponentInfo(_, _, _, lid, _, _, _, range)) = cinfo
           let nest = nestFromLongIdent context lid range
           yield! visitDeclarations nest nestedDecls
@@ -186,7 +186,7 @@ module private DiscovererImpl =
   let visitModulesAndNamespaces (context : DiscoverContext) modulesOrNss : SymbolInformation seq = 
     seq { 
       for moduleOrNs in modulesOrNss do
-        let (SynModuleOrNamespace(lid, _, decls, _, _, _, range)) = moduleOrNs
+        let (SynModuleOrNamespace(lid, _, _, decls, _, _, _, range)) = moduleOrNs
         let nest = nestFromLongIdent context lid range
         yield! visitDeclarations nest decls
     }
