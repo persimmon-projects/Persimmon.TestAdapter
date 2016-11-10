@@ -42,7 +42,9 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             string symbolName = args[1];
             string displayName = args[2];
             Exception[] exceptions = args[3];
-            TimeSpan duration = args[4];
+            string[] skips = args[4];
+            string[] failures = args[5];
+            TimeSpan duration = args[6];
 
             TestCase testCase;
             if (testCases_.TryGetValue(fullyQualifiedTestName, out testCase) == false)
@@ -67,7 +69,23 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             // TODO: Other outcome require handled.
             //   Strategy: testCases_ included target test cases,
             //     so match and filter into Finished(), filtered test cases marking TestOutcome.Notfound.
-            testResult.Outcome = (exceptions.Length >= 1) ? TestOutcome.Failed : TestOutcome.Passed;
+            if (exceptions.Length >= 1)
+            {
+                testResult.Outcome = TestOutcome.Failed;
+                testResult.ErrorMessage = exceptions[0].Message;
+                testResult.ErrorStackTrace = exceptions[0].StackTrace;
+            }
+            else if (skips.Length >= 1)
+            {
+                testResult.Outcome = TestOutcome.Skipped;
+                foreach (var msg in skips) testResult.Messages.Add(new TestResultMessage("", msg));
+            }
+            else if (failures.Length >= 1)
+            {
+                testResult.Outcome = TestOutcome.Failed;
+                foreach (var msg in failures) testResult.Messages.Add(new TestResultMessage("", msg));
+            }
+            else testResult.Outcome = TestOutcome.Passed;
             testResult.Duration = duration;
 
             parentSink_.Progress(testResult);

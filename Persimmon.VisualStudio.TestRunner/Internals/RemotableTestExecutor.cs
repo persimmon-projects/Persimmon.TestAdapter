@@ -192,6 +192,8 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                     symbolName,
                     displayName,
                     testResult.Exceptions, // TODO: exn may failed serialize. try convert safe types...
+                    testResult.SkipMessages,
+                    testResult.FailureMessages,
                     testResult.Duration
                 });
             });
