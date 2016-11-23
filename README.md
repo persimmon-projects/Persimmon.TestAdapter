@@ -12,7 +12,6 @@
 
 # Environment
 * Visual Studio 2013/2015
-* Persimmon-v2. testable branch current not merged, will be soon :)
 
 # License
 * Under MIT https://raw.githubusercontent.com/persimmon-projects/Persimmon.VisualStudio.TestExplorer/master/LICENSE.txt
@@ -26,5 +25,3 @@
 5. Attach your debugger onto "vstest.discoveryengine.x86.exe" (Dialog owned).
 6. Set breakpoints/exception settings/more...
 7. Click message box dialog's button, continue execution with debugger.
-
-* Currently, not merged persimmon-v2 codes in official repository. So if you are using test explorer, please use pre-v2 core code from https://github.com/kekyo/Persimmon .
