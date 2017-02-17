@@ -4,19 +4,26 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+#if NETCORE
+using System.Runtime.Loader;
+#endif
 
-namespace Persimmon.VisualStudio.TestRunner.Internals
+namespace Persimmon.TestRunner.Internals
 {
     /// <summary>
     /// Test assembly load/execute via remote AppDomain implementation.
     /// </summary>
-    public sealed class RemotableTestExecutor : MarshalByRefObject
+    public sealed class RemotableTestExecutor
+#if !NETCORE
+        : MarshalByRefObject
+#endif
     {
         /// <summary>
         /// Constructor.
         /// </summary>
         public RemotableTestExecutor()
         {
+#if !NETCORE
             Debug.Assert(this.GetType().Assembly.GlobalAssemblyCache);
 
             Debug.WriteLine(string.Format(
@@ -28,6 +35,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                 AppDomain.CurrentDomain.Id,
                 AppDomain.CurrentDomain.FriendlyName,
                 AppDomain.CurrentDomain.BaseDirectory));
+#endif
         }
 
         /// <summary>
@@ -51,13 +59,18 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             Debug.Assert(sinkTrampoline != null);
             Debug.Assert(rawAction != null);
 
+#if !NETCORE
             Debug.Assert(
                 Path.GetDirectoryName(targetAssemblyPath) == AppDomain.CurrentDomain.BaseDirectory);
+#endif
 
             sinkTrampoline.Begin(targetAssemblyPath);
 
             try
             {
+#if NETCORE
+                var testAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(targetAssemblyPath);
+#else
                 // 1. pre-load target assembly and analyze fully-qualified assembly name.
                 //   --> Assebly.ReflectionOnlyLoadFrom() is load assembly into reflection-only context.
                 var preLoadAssembly = Assembly.ReflectionOnlyLoadFrom(targetAssemblyPath);
@@ -67,6 +80,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
                 //   --> Assembly.Load() is load assembly into "default context."
                 //   --> Failed if current AppDomain.ApplicationBase folder is not target assembly path.
                 var testAssembly = Assembly.Load(assemblyFullName);
+#endif
 
                 // 3. extract Persimmon assembly name via test assembly,
                 foreach (var persimmonFullAssemblyName in
@@ -102,7 +116,7 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             catch (Exception ex)
             {
                 var message = string.Format(
-                    "Persimmon.VisualStudio.TestRunner: {0}: Type={1} TargetPath=\"{2}\", StackTrace={3}",
+                    "Persimmon.TestRunner: {0}: Type={1} TargetPath=\"{2}\", StackTrace={3}",
                     ex.Message,
                     ex.GetType().FullName,
                     targetAssemblyPath,

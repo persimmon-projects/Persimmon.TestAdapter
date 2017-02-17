@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Persimmon.VisualStudio.TestRunner")]
+[assembly: AssemblyTitle("Persimmon.TestRunner")]
 [assembly: AssemblyDescription("Visual Studio test explorer for Persimmon 2.0 (Runner assembly)")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

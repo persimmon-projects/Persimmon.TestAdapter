@@ -4,13 +4,17 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+#if NETCORE
+using System.Runtime.Loader;
+#else
 using System.Security.Policy;
+#endif
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Persimmon.VisualStudio.TestRunner.Internals;
+using Persimmon.TestRunner.Internals;
 
-namespace Persimmon.VisualStudio.TestRunner
+namespace Persimmon.TestRunner
 {
     /// <summary>
     /// Test assembly load/execute facade.
@@ -20,21 +24,37 @@ namespace Persimmon.VisualStudio.TestRunner
         private readonly string testRunnerAssemblyPath_;
         private readonly string testDiscovererPath_;
         private static readonly string testDiscovererTypeName_ =
-            "Persimmon.VisualStudio.TestDiscoverer.Discoverer";
+            "Persimmon.TestDiscoverer.Discoverer";
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public TestExecutor()
         {
+#if !NETCORE
             Debug.Assert(this.GetType().Assembly.GlobalAssemblyCache);
+#endif
 
+#if !NETCORE
             var callerAssembly = Assembly.GetCallingAssembly();
+#endif
 
-            testRunnerAssemblyPath_ = this.GetType().Assembly.Location;
+            testRunnerAssemblyPath_ =
+                this.GetType()
+#if NETCORE
+                    .GetTypeInfo()
+#endif
+                    .Assembly.Location;
+
             testDiscovererPath_ = Path.Combine(
-                Path.GetDirectoryName(callerAssembly.Location),
-                "Persimmon.VisualStudio.TestDiscoverer.dll");
+                Path.GetDirectoryName(
+#if NETCORE
+                    testRunnerAssemblyPath_
+#else
+                    callerAssembly.Location
+#endif
+                ),
+                "Persimmon.TestDiscoverer.dll");
         }
 
         /// <summary>
@@ -61,6 +81,11 @@ namespace Persimmon.VisualStudio.TestRunner
 
             return Task.Run(() =>
             {
+#if NETCORE
+                var type = AssemblyLoadContext.Default.LoadFromAssemblyPath(targetAssemblyPath).GetType(targetClassName);
+                var targetInstance = (T)Activator.CreateInstance(type);
+                return action(targetInstance);
+#else
                 // Strategy: Shadow copy information:
                 //   https://msdn.microsoft.com/en-us/library/ms404279%28v=vs.110%29.aspx
 
@@ -135,6 +160,7 @@ namespace Persimmon.VisualStudio.TestRunner
                     // Discard AppDomain.
                     AppDomain.Unload(separatedAppDomain);
                 }
+#endif
             });
         }
 

@@ -22,10 +22,10 @@
   </Dependencies>
   <Assets>
     <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="Persimmon.VisualStudio.TestRunner" Path="|Persimmon.VisualStudio.TestRunner|" AssemblyName="|Persimmon.VisualStudio.TestRunner;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="Persimmon.TestRunner" Path="|Persimmon.TestRunner|" AssemblyName="|Persimmon.TestRunner;AssemblyName|" />
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
     <Asset Type="UnitTestExtension" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
-    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="Persimmon.VisualStudio.TestDiscoverer" Path="|Persimmon.VisualStudio.TestDiscoverer|" AssemblyName="|Persimmon.VisualStudio.TestDiscoverer;AssemblyName|" />
+    <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="Project" d:ProjectName="Persimmon.TestDiscoverer" Path="|Persimmon.TestDiscoverer|" AssemblyName="|Persimmon.TestDiscoverer;AssemblyName|" />
     <Asset Type="Application Settings Configuration file" d:Source="File" Path="Persimmon.VisualStudio.TestExplorer.dll.config" />
     <Asset d:Source="File" Path="bin\Debug\FSharp.Compiler.Service.ProjectCrackerTool.exe" Type="Microsoft.VisualStudio.Samples" />
     <Asset d:Source="File" Path="bin\Debug\FSharp.Compiler.Service.ProjectCrackerTool.exe.config" Type="Microsoft.VisualStudio.Samples" />

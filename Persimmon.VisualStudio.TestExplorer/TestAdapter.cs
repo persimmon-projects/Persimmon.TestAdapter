@@ -6,39 +6,61 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+#if NETCORE
+using System.Reflection;
+#endif
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Microsoft.Win32;
-using Persimmon.VisualStudio.TestRunner;
-using Persimmon.VisualStudio.TestExplorer.Sinks;
+using Persimmon.TestRunner;
+using Persimmon.TestAdapter;
+using Persimmon.TestAdapter.Sinks;
 
+#if !NETCORE
 namespace Persimmon.VisualStudio.TestExplorer
+#else
+namespace Persimmon.TestAdapter
+#endif
 {
     /// <summary>
     /// Persimmon test explorer adapter class.
     /// </summary>
     [FileExtension(".dll")]
+    [FileExtension(".exe")]
     [ExtensionUri(Constant.ExtensionUriString)]
     [DefaultExecutorUri(Constant.ExtensionUriString)]
     public sealed class TestAdapter : ITestDiscoverer, ITestExecutor
     {
         #region Fields
         private static readonly HashSet<string> excludeAssemblies_ =
-            new HashSet<string>(StringComparer.InvariantCultureIgnoreCase)
+            new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
             {
-                "Persimmon", "Persimmon.Runner", "Persimmon.Console", "Persimmon.Script", "Persimmon.Sample"
+                "Persimmon",
+                "Persimmon.Runner",
+                "Persimmon.Console",
+                "Persimmon.TestRunner",
+                "Persimmon.TestDiscoverer",
+                "Persimmon.TestAdapter"
             };
+#if !NETCORE
         private static readonly object lock_ = new object();
         private static bool ready_;
+#endif
 
-        private readonly Version version_ = typeof(TestAdapter).Assembly.GetName().Version;
+        private readonly Version version_ =
+            typeof(TestAdapter)
+#if NETCORE
+                .GetTypeInfo()
+#endif
+                .Assembly.GetName().Version;
         private readonly ConcurrentQueue<CancellationTokenSource> cancellationTokens_ =
             new ConcurrentQueue<CancellationTokenSource>();
         #endregion
 
         #region WaitingForAttachDebuggerIfRequired
+#if !NETCORE
         private static bool IsDebuggable(RegistryView view)
         {
             using (var hklmKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
@@ -90,6 +112,7 @@ namespace Persimmon.VisualStudio.TestExplorer
                 }
             }
         }
+#endif
         #endregion
 
         #region DiscoverTests
@@ -101,7 +124,7 @@ namespace Persimmon.VisualStudio.TestExplorer
         {
             logger.SendMessage(
                 TestMessageLevel.Informational,
-                string.Format("Persimmon Test Explorer {0} discovering tests started", version_));
+                string.Format("Persimmon Test Adapter {0} discovering tests started", version_));
 
             try
             {
@@ -132,7 +155,7 @@ namespace Persimmon.VisualStudio.TestExplorer
             {
                 logger.SendMessage(
                     TestMessageLevel.Informational,
-                    string.Format("Persimmon Test Explorer {0} discovering tests finished", version_));
+                    string.Format("Persimmon Test Adapter {0} discovering tests finished", version_));
             }
         }
 
@@ -149,7 +172,9 @@ namespace Persimmon.VisualStudio.TestExplorer
             IMessageLogger logger,
             ITestCaseDiscoverySink discoverySink)
         {
+#if !NETCORE
             this.WaitingForAttachDebuggerIfRequired();
+#endif
 
             this.DiscoverTestsAsync(sources, discoveryContext, logger, discoverySink).Wait();
         }
@@ -161,11 +186,13 @@ namespace Persimmon.VisualStudio.TestExplorer
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
+#if !NETCORE
             this.WaitingForAttachDebuggerIfRequired();
+#endif
 
             frameworkHandle.SendMessage(
                 TestMessageLevel.Informational,
-                string.Format("Persimmon Test Explorer {0} run tests started", version_));
+                string.Format("Persimmon Test Adapter {0} run tests started", version_));
             try
             {
                 var testExecutor = new TestExecutor();
@@ -192,7 +219,7 @@ namespace Persimmon.VisualStudio.TestExplorer
             {
                 frameworkHandle.SendMessage(
                     TestMessageLevel.Informational,
-                    string.Format("Persimmon Test Explorer {0} run tests finished", version_));
+                    string.Format("Persimmon Test Adapter {0} run tests finished", version_));
             }
         }
 
@@ -207,7 +234,9 @@ namespace Persimmon.VisualStudio.TestExplorer
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
+#if !NETCORE
             this.WaitingForAttachDebuggerIfRequired();
+#endif
 
             this.RunTestsAsync(sources, runContext, frameworkHandle).Wait();
         }
@@ -221,7 +250,7 @@ namespace Persimmon.VisualStudio.TestExplorer
         {
             frameworkHandle.SendMessage(
                 TestMessageLevel.Informational,
-                string.Format("Persimmon Test Explorer {0} run tests started", version_));
+                string.Format("Persimmon Test Adapter {0} run tests started", version_));
 
             try
             {
@@ -246,7 +275,7 @@ namespace Persimmon.VisualStudio.TestExplorer
             {
                 frameworkHandle.SendMessage(
                     TestMessageLevel.Informational,
-                    string.Format("Persimmon Test Explorer {0} run tests finished", version_));
+                    string.Format("Persimmon Test Adapter {0} run tests finished", version_));
             }
         }
 
@@ -261,7 +290,9 @@ namespace Persimmon.VisualStudio.TestExplorer
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
+#if !NETCORE
             this.WaitingForAttachDebuggerIfRequired();
+#endif
 
             this.RunTestsAsync(tests, runContext, frameworkHandle).Wait();
         }

@@ -7,13 +7,13 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>75d1134f-99b0-4753-8481-d241dc314c73</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Persimmon.VisualStudio.TestDiscoverer</RootNamespace>
-    <AssemblyName>Persimmon.VisualStudio.TestDiscoverer</AssemblyName>
+    <RootNamespace>Persimmon.TestDiscoverer</RootNamespace>
+    <AssemblyName>Persimmon.TestDiscoverer</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <TargetFrameworkProfile />
     <ApplicationIcon>..\persimmon.ico</ApplicationIcon>
-    <Name>Persimmon.VisualStudio.TestDiscoverer</Name>
+    <Name>Persimmon.TestDiscoverer</Name>
     <RestorePackages>true</RestorePackages>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -29,7 +29,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\Persimmon.VisualStudio.TestDiscoverer.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Persimmon.TestDiscoverer.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,7 +38,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\Persimmon.VisualStudio.TestDiscoverer.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Persimmon.TestDiscoverer.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -101,8 +101,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Persimmon.VisualStudio.TestRunner\Persimmon.VisualStudio.TestRunner.csproj">
-      <Name>Persimmon.VisualStudio.TestRunner</Name>
+    <ProjectReference Include="..\Persimmon.TestRunner\Persimmon.TestRunner.csproj">
+      <Name>Persimmon.TestRunner</Name>
       <Project>{e7226d5a-7306-41d2-8a30-435728fd604b}</Project>
       <Private>True</Private>
     </ProjectReference>

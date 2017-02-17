@@ -4,9 +4,13 @@ using System.Diagnostics;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
-namespace Persimmon.VisualStudio.TestRunner.Internals
+namespace Persimmon.TestRunner.Internals
 {
-    public sealed class RunSinkTrampoline : MarshalByRefObject, ISinkTrampoline
+    public sealed class RunSinkTrampoline :
+#if !NETCORE
+        MarshalByRefObject,
+#endif
+        ISinkTrampoline
     {
         private readonly string targetAssemblyPath_;
         private readonly ITestRunSink parentSink_;

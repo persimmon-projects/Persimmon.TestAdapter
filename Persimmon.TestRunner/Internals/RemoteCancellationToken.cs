@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Threading;
 
-namespace Persimmon.VisualStudio.TestRunner.Internals
+namespace Persimmon.TestRunner.Internals
 {
-    public sealed class RemoteCancellationToken : MarshalByRefObject
+    public sealed class RemoteCancellationToken
+#if !NETCORE
+        : MarshalByRefObject
+#endif
     {
         private readonly CancellationToken token_;
 
@@ -44,7 +47,10 @@ namespace Persimmon.VisualStudio.TestRunner.Internals
             return new RemoteCancellationToken(token);
         }
 
-        public sealed class InternalRemoteCancellationTokenSink : MarshalByRefObject 
+        public sealed class InternalRemoteCancellationTokenSink
+#if !NETCORE
+            : MarshalByRefObject
+#endif
         {
             private readonly CancellationTokenSource cts_ = new CancellationTokenSource();
 

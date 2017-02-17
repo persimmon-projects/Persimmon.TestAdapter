@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persimmon.VisualStudio.TestRunner
+namespace Persimmon.TestRunner
 {
     public interface ITestSink
     {

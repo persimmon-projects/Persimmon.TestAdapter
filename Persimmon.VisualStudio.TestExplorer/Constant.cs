@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Persimmon.VisualStudio.TestExplorer
+namespace Persimmon.TestAdapter
 {
     internal static class Constant
     {

@@ -43,7 +43,7 @@
         Id="ProductFeature"
         Title="Persimmon.VisualStudio.TestExplorer"
         Level="1">
-      <ComponentRef Id="C.Persimmon.VisualStudio.TestRunner" />
+      <ComponentRef Id="C.Persimmon.TestRunner" />
       <ComponentRef Id="C.Persimmon.VisualStudio.TestExplorer" />
     </Feature>
   </Product>
@@ -60,13 +60,13 @@
 
   <Fragment>
     <Component
-        Id="C.Persimmon.VisualStudio.TestRunner"
+        Id="C.Persimmon.TestRunner"
         Guid="650419E2-A2B2-45DE-8919-7D2D2D146DDA"
         Directory="INSTALLFOLDER">
     <File
-        Id="F.Persimmon.VisualStudio.TestRunner.dll"
-        Name="Persimmon.VisualStudio.TestRunner.dll"
-        Source="$(var.SolutionDir)\Persimmon.VisualStudio.TestRunner\bin\$(var.Persimmon.VisualStudio.TestRunner.Configuration)\Persimmon.VisualStudio.TestRunner.dll"
+        Id="F.Persimmon.TestRunner.dll"
+        Name="Persimmon.TestRunner.dll"
+        Source="$(var.SolutionDir)\Persimmon.TestRunner\bin\$(var.Persimmon.TestRunner.Configuration)\Persimmon.TestRunner.dll"
         KeyPath="yes"
         Assembly=".net"/>
     </Component>

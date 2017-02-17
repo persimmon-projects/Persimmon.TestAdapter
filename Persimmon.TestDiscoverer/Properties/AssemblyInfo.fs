@@ -14,7 +14,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyConfiguration("RELEASE")>]
 #endif
 
-[<assembly: AssemblyTitle("Persimmon.VisualStudio.TestDiscoverer")>]
+[<assembly: AssemblyTitle("Persimmon.TestDiscoverer")>]
 [<assembly: AssemblyDescription("Visual Studio test explorer for Persimmon 2.0 (Discoverer assembly)")>]
 [<assembly: Guid("D5478524-6779-4A0C-A056-50CF603CBA91")>]
 

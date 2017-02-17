@@ -3,9 +3,9 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 
-using Persimmon.VisualStudio.TestRunner;
+using Persimmon.TestRunner;
 
-namespace Persimmon.VisualStudio.TestExplorer.Sinks
+namespace Persimmon.TestAdapter.Sinks
 {
     internal sealed class TestRunSink : ITestRunSink
     {

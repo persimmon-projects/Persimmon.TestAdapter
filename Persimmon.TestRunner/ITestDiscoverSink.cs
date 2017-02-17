@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
-namespace Persimmon.VisualStudio.TestRunner
+namespace Persimmon.TestRunner
 {
     public interface ITestDiscoverSink : ITestSink
     {

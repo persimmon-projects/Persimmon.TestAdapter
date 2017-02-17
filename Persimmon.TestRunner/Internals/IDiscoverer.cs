@@ -1,4 +1,4 @@
-﻿namespace Persimmon.VisualStudio.TestRunner.Internals
+﻿namespace Persimmon.TestRunner.Internals
 {
     public interface IDiscoverer
     {

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.IO;
 
-namespace Persimmon.VisualStudio.TestRunner.Internals
+namespace Persimmon.TestRunner.Internals
 {
     /// <summary>
     /// Source code symbol informations from TestDiscoverer.
     /// </summary>
+#if !NETCORE
     [Serializable]
+#endif
     public sealed class SymbolInformation : IEquatable<SymbolInformation>
     {
         public readonly string SymbolName;

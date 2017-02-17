@@ -145,15 +145,15 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Persimmon.VisualStudio.TestDiscoverer\Persimmon.VisualStudio.TestDiscoverer.fsproj">
+    <ProjectReference Include="..\Persimmon.TestDiscoverer\Persimmon.TestDiscoverer.fsproj">
       <Project>{75D1134F-99B0-4753-8481-D241DC314C73}</Project>
-      <Name>Persimmon.VisualStudio.TestDiscoverer</Name>
+      <Name>Persimmon.TestDiscoverer</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
-    <ProjectReference Include="..\Persimmon.VisualStudio.TestRunner\Persimmon.VisualStudio.TestRunner.csproj">
+    <ProjectReference Include="..\Persimmon.TestRunner\Persimmon.TestRunner.csproj">
       <Project>{e7226d5a-7306-41d2-8a30-435728fd604b}</Project>
-      <Name>Persimmon.VisualStudio.TestRunner</Name>
+      <Name>Persimmon.TestRunner</Name>
       <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup%3b</IncludeOutputGroupsInVSIX>
       <IncludeOutputGroupsInVSIXLocalOnly>DebugSymbolsProjectOutputGroup%3b</IncludeOutputGroupsInVSIXLocalOnly>
     </ProjectReference>
@@ -178,6 +178,10 @@
       <Link>Properties\Persimmon.VisualStudio.TestExplorer.snk</Link>
     </None>
     <Content Include="FSharp.Compiler.Service.ProjectCrackerTool.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="FSharp.Compiler.Service.ProjectCrackerTool.exe.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
