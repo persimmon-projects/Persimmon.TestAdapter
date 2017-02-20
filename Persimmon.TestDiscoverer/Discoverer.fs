@@ -58,20 +58,10 @@ module private DiscovererImpl =
   ///    App (Expr1):
   ///      Const:
   ///        String: "success test(list)"  <-- Return test title string.
-  /// TODO: Ugly match expr...
   let tryGetTestName =
     function
-    | SynExpr.App(_, _, expr0, expr1, _) ->
-      match expr0 with
-      | SynExpr.Ident(_) -> // Ident
-        match expr1 with
-        | SynExpr.Const(c, _) -> // Const
-          match c with
-          | SynConst.String(str, range) -> // String
-            Some(str, range)
-          | _ -> None
-        | _ -> None
-      | _ -> None
+    | SynExpr.App(_, _, SynExpr.Ident(_), SynExpr.Const(SynConst.String(str, range), _), _) ->
+      Some(str, range)
     | _ -> None
 
   /// Expression visit.
@@ -236,7 +226,7 @@ type Discoverer() =
         let! results = checker.ParseFileInProject(path, sourceCodeText, projOptions)
         return DiscovererImpl.visitTreeRoot results |> Seq.toArray
       with
-      | _ as ex ->
+      | ex ->
         Trace.WriteLine("TestDiscoverer: " + ex.ToString())
         return [||]
     }
@@ -247,13 +237,13 @@ type Discoverer() =
         // TODO: ProjectCracker cannot retrieve source code file paths,
         //   try improvement ProjectCracker and send PR? :)
         let! results = projOptions.OtherOptions
-                       |> Seq.filter (fun opt -> opt.StartsWith("-") = false)
+                       |> Seq.filter (fun opt -> not <| opt.StartsWith("-"))
                        |> Seq.map (fun path -> asyncParseCode projOptions path)
                        |> Async.Parallel
-        return (results |> Seq.collect (fun result -> result)).Distinct()
+        return (results |> Seq.collect id).Distinct()
                |> Seq.toArray
       with
-      | _ as ex ->
+      | ex ->
         Trace.WriteLine("TestDiscoverer: " + ex.ToString())
         return [||]
     }
@@ -266,7 +256,7 @@ type Discoverer() =
         let projOptions = ProjectCracker.GetProjectOptionsFromProjectFile fsprojPath
         asyncParseCodes projOptions
       with
-      | _ as ex ->
+      | ex ->
         Trace.WriteLine("TestDiscoverer: " + ex.ToString())
         async { return [||] }
     | None -> async {
