@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp1.0</TargetFramework>
     <Version>0.9.7</Version>
@@ -9,18 +8,12 @@
     <PackageTargetFallback>portable-net45+win8+wpa81+wp8</PackageTargetFallback>
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="..\Persimmon.VisualStudio.TestExplorer\*.cs" />
     <Compile Include="..\Persimmon.VisualStudio.TestExplorer\Sinks\*.cs" />
-    <Content Include="..\Persimmon.VisualStudio.TestExplorer\FSharp.Compiler.Service.ProjectCrackerTool.exe*">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Persimmon.TestRunner.NETCore\Persimmon.TestRunner.NETCore.csproj" />
     <ProjectReference Include="..\Persimmon.TestDiscoverer.NETCore\Persimmon.TestDiscoverer.NETCore.fsproj" />
   </ItemGroup>
-
 </Project>
