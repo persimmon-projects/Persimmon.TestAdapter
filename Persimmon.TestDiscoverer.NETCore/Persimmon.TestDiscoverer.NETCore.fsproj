@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
     <AssemblyName>Persimmon.TestDiscoverer</AssemblyName>
-    <Version>0.9.7</Version>
+    <Version>0.9.8</Version>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
     <AssemblyOriginatorKeyFile>..\Persimmon.TestAdapter.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>false</SignAssembly>
