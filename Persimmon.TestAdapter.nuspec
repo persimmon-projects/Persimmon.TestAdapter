@@ -47,5 +47,7 @@ Supported platforms:
     <file src="Persimmon.TestDiscoverer.NETCore/bin/Release/netstandard1.6/Persimmon.TestDiscoverer.dll" target="build/netcoreapp1.0" />
     <file src="Persimmon.TestAdapter/bin/Release/net45/Persimmon.TestAdapter.dll" target="build/net45" />
     <file src="Persimmon.TestAdapter/bin/Release/netcoreapp1.0/Persimmon.TestAdapter.dll" target="build/netcoreapp1.0" />
+    <file src="build/Persimmon.TestAdapter.props" target="build/net45" />
+    <file src="build/Persimmon.TestAdapter.props" target="build/netcoreapp1.0" />
   </files>
 </package>
