@@ -1,7 +1,10 @@
 version: 1.0.{build}
 os: Visual Studio 2017
-configuration: Release
-build:
-  verbosity: minimal
-before_build:
+skip_commits:
+  message: \[(ci skip|skip ci)\].*
+clone_depth: 50
+test: off
+build_script:
   - dotnet restore
+  - dotnet test ./Persimmon.TestAdapter.Tests/Persimmon.TestAdapter.Tests.fsproj  -c Release
+  - dotnet test ./Persimmon.TestAdapter.NETCore.Tests/Persimmon.TestAdapter.NETCore.Tests.fsproj  -c Release
