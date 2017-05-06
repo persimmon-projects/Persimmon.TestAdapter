@@ -4,7 +4,6 @@
 
 * Still under construction...
 * Continuous integration: [![Build status](https://ci.appveyor.com/api/projects/status/yum3a2eybr7s7ven?svg=true)](https://ci.appveyor.com/project/kekyo/persimmon-visualstudio-testexplorer)
-* Latest "unstable" CI build binary: https://ci.appveyor.com/api/buildjobs/qhrkfuh0rvfj8fxy/artifacts/Persimmon.VisualStudio.TestExplorer.Setup/bin/Release/Persimmon.VisualStudio.TestExplorer.Setup.msi
 
 ## What is this?
 
