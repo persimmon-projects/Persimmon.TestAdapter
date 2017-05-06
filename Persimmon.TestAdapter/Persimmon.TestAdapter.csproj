@@ -1,19 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <AssemblyName>Persimmon.TestAdapter</AssemblyName>
+    <TargetFrameworks>net45;netcoreapp1.0</TargetFrameworks>
     <Version>0.9.7</Version>
-    <AssemblyOriginatorKeyFile>..\Persimmon.VisualStudio.TestExplorer.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Persimmon.TestAdapter.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
-    <PackageTargetFallback>portable-net45+win8+wpa81+wp8</PackageTargetFallback>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp1.0'">
     <DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Persimmon.VisualStudio.TestExplorer\*.cs" />
-    <Compile Include="..\Persimmon.VisualStudio.TestExplorer\Sinks\*.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Persimmon.TestRunner.NETCore\Persimmon.TestRunner.NETCore.csproj" />
-    <ProjectReference Include="..\Persimmon.TestDiscoverer.NETCore\Persimmon.TestDiscoverer.NETCore.fsproj" />
+    <ProjectReference Include="..\Persimmon.TestRunner\Persimmon.TestRunner.csproj" />
   </ItemGroup>
 </Project>

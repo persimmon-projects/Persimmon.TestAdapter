@@ -1,7 +1,5 @@
 version: 1.0.{build}
+os: Visual Studio 2017
 configuration: Release
 build:
   verbosity: minimal
-artifacts:
-- path: Persimmon.VisualStudio.TestExplorer.Setup\bin\Release\Persimmon.VisualStudio.TestExplorer.Setup.msi
-  name: Persimmon.VisualStudio.TestExplorer.Setup.msi

@@ -4,7 +4,7 @@
     <AssemblyName>Persimmon.TestDiscoverer</AssemblyName>
     <Version>0.9.7</Version>
     <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
-    <AssemblyOriginatorKeyFile>..\Persimmon.VisualStudio.TestExplorer.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Persimmon.TestAdapter.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>false</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
     <PackageTargetFallback>portable-net45+win8+wpa81+wp8</PackageTargetFallback>
@@ -15,7 +15,7 @@
     <Compile Include="..\Persimmon.TestDiscoverer\Discoverer.fs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Persimmon.TestRunner.NETCore\Persimmon.TestRunner.NETCore.csproj" />
+    <ProjectReference Include="..\Persimmon.TestRunner\Persimmon.TestRunner.csproj" />
     <PackageReference Include="FSharp.NET.Sdk" Version="1.0.*" PrivateAssets="All" />
     <PackageReference Include="FSharp.Compiler.Service" Version="12.0.8" />
     <PackageReference Include="Dotnet.ProjInfo" Version="0.6.0" />
