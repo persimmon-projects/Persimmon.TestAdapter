@@ -82,7 +82,7 @@ namespace Persimmon.TestRunner
             return Task.Run(() =>
             {
 #if NETCORE
-                var type = AssemblyLoadContext.Default.LoadFromAssemblyPath(targetAssemblyPath).GetType(targetClassName);
+                var type = Assembly.Load(new AssemblyName(Path.GetFileNameWithoutExtension(targetAssemblyPath))).GetType(targetClassName);
                 var targetInstance = (T)Activator.CreateInstance(type);
                 return action(targetInstance);
 #else

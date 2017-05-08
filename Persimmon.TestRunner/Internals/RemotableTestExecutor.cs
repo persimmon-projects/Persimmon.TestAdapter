@@ -69,7 +69,7 @@ namespace Persimmon.TestRunner.Internals
             try
             {
 #if NETCORE
-                var testAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(targetAssemblyPath);
+                var testAssembly = Assembly.Load(new AssemblyName(Path.GetFileNameWithoutExtension(targetAssemblyPath)));
 #else
                 // 1. pre-load target assembly and analyze fully-qualified assembly name.
                 //   --> Assebly.ReflectionOnlyLoadFrom() is load assembly into reflection-only context.
