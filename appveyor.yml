@@ -1,7 +1,10 @@
 version: 1.0.{build}
-configuration: Release
-build:
-  verbosity: minimal
-artifacts:
-- path: Persimmon.VisualStudio.TestExplorer.Setup\bin\Release\Persimmon.VisualStudio.TestExplorer.Setup.msi
-  name: Persimmon.VisualStudio.TestExplorer.Setup.msi
+os: Visual Studio 2017
+skip_commits:
+  message: \[(ci skip|skip ci)\].*
+clone_depth: 50
+test: off
+build_script:
+  - dotnet restore
+  - dotnet test ./Persimmon.TestAdapter.Tests/Persimmon.TestAdapter.Tests.fsproj  -c Release
+  - dotnet test ./Persimmon.TestAdapter.NETCore.Tests/Persimmon.TestAdapter.NETCore.Tests.fsproj  -c Release
