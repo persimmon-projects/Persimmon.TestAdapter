@@ -13,14 +13,9 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
 using Persimmon.TestRunner;
-using Persimmon.TestAdapter;
 using Persimmon.TestAdapter.Sinks;
 
-#if !NETCORE
-namespace Persimmon.VisualStudio.TestExplorer
-#else
 namespace Persimmon.TestAdapter
-#endif
 {
     /// <summary>
     /// Persimmon test explorer adapter class.
