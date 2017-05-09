@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -13,7 +12,6 @@ using System.Reflection;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Adapter;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging;
-using Microsoft.Win32;
 using Persimmon.TestRunner;
 using Persimmon.TestAdapter;
 using Persimmon.TestAdapter.Sinks;
@@ -44,10 +42,6 @@ namespace Persimmon.TestAdapter
                 "Persimmon.TestDiscoverer",
                 "Persimmon.TestAdapter"
             };
-#if !NETCORE
-        private static readonly object lock_ = new object();
-        private static bool ready_;
-#endif
 
         private readonly Version version_ =
             typeof(TestAdapter)
@@ -57,62 +51,6 @@ namespace Persimmon.TestAdapter
                 .Assembly.GetName().Version;
         private readonly ConcurrentQueue<CancellationTokenSource> cancellationTokens_ =
             new ConcurrentQueue<CancellationTokenSource>();
-        #endregion
-
-        #region WaitingForAttachDebuggerIfRequired
-#if !NETCORE
-        private static bool IsDebuggable(RegistryView view)
-        {
-            using (var hklmKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
-            {
-                var subKey = hklmKey.OpenSubKey(@"SOFTWARE\Persimmon\VisualStudio.TestExplorer", false);
-                if (subKey != null)
-                {
-                    using (var persimmonKey = subKey)
-                    {
-                        try
-                        {
-                            var value = Convert.ToInt32(persimmonKey.GetValue("Debug"));
-                            return value != 0;
-                        }
-                        catch
-                        {
-                        }
-                    }
-                }
-            }
-
-#if DEBUG
-            return true;
-#else
-            return false;
-#endif
-        }
-
-        private void WaitingForAttachDebuggerIfRequired()
-        {
-            lock (lock_)
-            {
-                if (ready_ == false)
-                {
-                    var isDebuggable =
-                        IsDebuggable(RegistryView.Registry64) |
-                        IsDebuggable(RegistryView.Registry32);
-
-                    if (isDebuggable == true)
-                    {
-                        NativeMethods.MessageBox(
-                            IntPtr.Zero,
-                            "Waiting for attach debugger ...",
-                            string.Format("Persimmon ({0})", Process.GetCurrentProcess().Id),
-                            NativeMethods.MessageBoxOptions.IconWarning | NativeMethods.MessageBoxOptions.OkOnly);
-                    }
-
-                    ready_ = true;
-                }
-            }
-        }
-#endif
         #endregion
 
         #region DiscoverTests
@@ -172,10 +110,6 @@ namespace Persimmon.TestAdapter
             IMessageLogger logger,
             ITestCaseDiscoverySink discoverySink)
         {
-#if !NETCORE
-            this.WaitingForAttachDebuggerIfRequired();
-#endif
-
             this.DiscoverTestsAsync(sources, discoveryContext, logger, discoverySink).Wait();
         }
         #endregion
@@ -186,9 +120,6 @@ namespace Persimmon.TestAdapter
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
-#if !NETCORE
-            this.WaitingForAttachDebuggerIfRequired();
-#endif
 
             frameworkHandle.SendMessage(
                 TestMessageLevel.Informational,
@@ -234,10 +165,6 @@ namespace Persimmon.TestAdapter
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
-#if !NETCORE
-            this.WaitingForAttachDebuggerIfRequired();
-#endif
-
             this.RunTestsAsync(sources, runContext, frameworkHandle).Wait();
         }
         #endregion
@@ -290,10 +217,6 @@ namespace Persimmon.TestAdapter
             IRunContext runContext,
             IFrameworkHandle frameworkHandle)
         {
-#if !NETCORE
-            this.WaitingForAttachDebuggerIfRequired();
-#endif
-
             this.RunTestsAsync(tests, runContext, frameworkHandle).Wait();
         }
         #endregion
