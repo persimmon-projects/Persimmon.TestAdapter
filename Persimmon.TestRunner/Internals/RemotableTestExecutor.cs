@@ -14,9 +14,7 @@ namespace Persimmon.TestRunner.Internals
     /// Test assembly load/execute via remote AppDomain implementation.
     /// </summary>
     public sealed class RemotableTestExecutor
-#if !NETCORE
         : MarshalByRefObject
-#endif
     {
         /// <summary>
         /// Constructor.
@@ -25,6 +23,7 @@ namespace Persimmon.TestRunner.Internals
         {
 #if !NETCORE
             Debug.Assert(this.GetType().Assembly.GlobalAssemblyCache);
+#endif
 
             Debug.WriteLine(string.Format(
                 "{0}: constructed: Process={1}, Thread=[{2},{3}], AppDomain=[{4},{5},{6}]",
@@ -35,7 +34,6 @@ namespace Persimmon.TestRunner.Internals
                 AppDomain.CurrentDomain.Id,
                 AppDomain.CurrentDomain.FriendlyName,
                 AppDomain.CurrentDomain.BaseDirectory));
-#endif
         }
 
         /// <summary>

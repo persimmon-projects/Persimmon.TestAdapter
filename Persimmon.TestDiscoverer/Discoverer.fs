@@ -197,10 +197,7 @@ module private DiscovererImpl =
 
 [<Sealed>]
 type Discoverer() =
-#if NETCORE
-#else
   inherit MarshalByRefObject()
-#endif
 
   let rec traverseFsprojRecursive basePath fsprojName =
     match basePath with

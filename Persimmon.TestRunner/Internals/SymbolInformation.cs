@@ -6,9 +6,7 @@ namespace Persimmon.TestRunner.Internals
     /// <summary>
     /// Source code symbol informations from TestDiscoverer.
     /// </summary>
-#if !NETCORE
     [Serializable]
-#endif
     public sealed class SymbolInformation : IEquatable<SymbolInformation>
     {
         public readonly string SymbolName;
@@ -86,7 +84,7 @@ namespace Persimmon.TestRunner.Internals
                 "{0}({1},{2}): {3}",
                 Path.GetFileName(this.FileName),
                 this.MinLineNumber,
-                this.MinColumnNumber, 
+                this.MinColumnNumber,
                 this.SymbolName);
         }
     }

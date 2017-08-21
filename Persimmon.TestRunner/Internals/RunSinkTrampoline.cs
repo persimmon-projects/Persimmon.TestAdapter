@@ -7,9 +7,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 namespace Persimmon.TestRunner.Internals
 {
     public sealed class RunSinkTrampoline :
-#if !NETCORE
         MarshalByRefObject,
-#endif
         ISinkTrampoline
     {
         private readonly string targetAssemblyPath_;
