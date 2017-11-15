@@ -2,7 +2,7 @@
   <PropertyGroup>
     <AssemblyName>Persimmon.TestRunner</AssemblyName>
     <TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
-    <Version>0.9.8</Version>
+    <Version>0.10.0</Version>
     <AssemblyOriginatorKeyFile>..\Persimmon.TestAdapter.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>

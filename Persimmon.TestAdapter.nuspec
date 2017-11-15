@@ -2,18 +2,18 @@
 <package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>Persimmon.TestAdapter</id>
-    <version>0.9.8</version>
+    <version>0.10.0</version>
     <authors>bleis-tift, Gab-km, pocketberserker, kekyo, yukitos</authors>
     <owners>bleis-tift, Gab-km, pocketberserker, kekyo, yukitos</owners>
     <licenseUrl>https://github.com/persimmon-projects/Persimmon.TestAdapter/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/persimmon-projects/Persimmon.TestAdapter</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/persimmon-projects/Persimmon.Materials/master/StandardIcons/persimmon_128.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Visual Studio 2015+ Test Explorer runner for Persimmon. Capable of running Persimmon v2.0+ tests.
+    <description>Visual Studio 2017+ Test Explorer runner for Persimmon. Capable of running Persimmon v3.0+ tests.
 
 Supported platforms:
 - Desktop .NET 2.0+
-- .NET Core (including ASP.NET Core) 1.0+</description>
+- .NET Core (including ASP.NET Core) 2.0+</description>
     <tags>F# fsharp testing</tags>
     <dependencies>
       <group targetFramework=".NETFramework4.5">
