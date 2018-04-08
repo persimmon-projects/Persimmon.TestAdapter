@@ -1,0 +1,9 @@
+group Legacy
+  FSharp.Compiler.Service
+  FSharp.Compiler.Service.ProjectCracker
+  Microsoft.CSharp
+  Microsoft.TestPlatform.ObjectModel
+group Test
+  FSharp.Core
+  Persimmon
+  Microsoft.NET.Test.Sdk

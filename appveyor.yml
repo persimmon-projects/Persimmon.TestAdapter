@@ -5,6 +5,4 @@ skip_commits:
 clone_depth: 50
 test: off
 build_script:
-  - dotnet restore
-  - dotnet test ./Persimmon.TestAdapter.Tests/Persimmon.TestAdapter.Tests.fsproj  -c Release
-  - dotnet test ./Persimmon.TestAdapter.NETCore.Tests/Persimmon.TestAdapter.NETCore.Tests.fsproj  -c Release
+  - build.cmd

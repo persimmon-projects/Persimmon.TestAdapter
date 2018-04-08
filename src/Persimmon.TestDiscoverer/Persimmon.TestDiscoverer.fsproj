@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net451;netstandard2.0</TargetFrameworks>
+    <AssemblyName>Persimmon.TestDiscoverer</AssemblyName>
+    <AssemblyOriginatorKeyFile>..\..\Persimmon.TestAdapter.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>
+    <PublicSign Condition="'$(OS)' != 'Windows_NT'">true</PublicSign>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <DefineConstants>$(DefineConstants);NO_PROJECTCRACKER</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="ProjectCracker.fs" />
+    <Compile Include="Discoverer.fs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net451'">
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Discoverer.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Persimmon.TestRunner\Persimmon.TestRunner.csproj" />
+  </ItemGroup>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>
