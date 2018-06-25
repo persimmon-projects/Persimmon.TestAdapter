@@ -1,0 +1,10 @@
+Microsoft.CSharp
+Microsoft.TestPlatform.ObjectModel
+System.Dynamic.Runtime
+System.Threading.Thread
+System.Collections
+System.Runtime.Extensions
+System.Linq
+group Legacy
+  Microsoft.CSharp
+  Microsoft.TestPlatform.ObjectModel

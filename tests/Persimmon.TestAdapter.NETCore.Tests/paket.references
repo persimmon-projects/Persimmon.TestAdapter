@@ -1,0 +1,13 @@
+Dotnet.ProjInfo
+FSharp.Compiler.Service
+Microsoft.CSharp
+Microsoft.TestPlatform.ObjectModel
+System.Dynamic.Runtime
+System.Threading.Thread
+System.Collections
+System.Runtime.Extensions
+System.Linq
+group Test
+  FSharp.Core
+  Persimmon
+  Microsoft.NET.Test.Sdk

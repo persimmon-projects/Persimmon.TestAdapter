@@ -1,0 +1,48 @@
+type project
+owners
+    bleis-tift, Gab-km, pocketberserker, kekyo, yukitos
+authors
+    bleis-tift, Gab-km, pocketberserker, kekyo, yukitos
+projectUrl
+    https://github.com/persimmon-projects/Persimmon.TestAdapter
+licenseUrl
+    https://github.com/persimmon-projects/Persimmon.TestAdapter/blob/master/LICENSE.txt
+iconUrl
+    https://raw.githubusercontent.com/persimmon-projects/Persimmon.Materials/master/StandardIcons/persimmon_128.png
+requireLicenseAcceptance
+    false
+tags
+    F#, fsharp, testing
+description
+  Visual Studio 2017+ Test Explorer runner for Persimmon. Capable of running Persimmon v4.0+ tests.
+
+  Supported platforms:
+    - Desktop .NET 4.5.1+
+    - .NET Core (including ASP.NET Core) 2.0+
+dependencies
+  framework: net451
+    FSharp.Core >= LOCKEDVERSION-Legacy
+    Microsoft.CSharp >= LOCKEDVERSION-Legacy
+    Microsoft.TestPlatform.ObjectModel >= LOCKEDVERSION-Legacy
+    FSharp.Compiler.Service >= LOCKEDVERSION-Legacy
+    FSharp.Compiler.Service.ProjectCracker >= LOCKEDVERSION-Legacy
+  framework: netcoreapp2.0
+    FSharp.Core >= LOCKEDVERSION
+    Microsoft.CSharp >= LOCKEDVERSION
+    Microsoft.TestPlatform.ObjectModel >= LOCKEDVERSION
+    Dotnet.ProjInfo >= LOCKEDVERSION
+    FSharp.Compiler.Service >= LOCKEDVERSION
+    System.Dynamic.Runtime >= LOCKEDVERSION
+    System.Threading.Thread >= LOCKEDVERSION
+    System.Collections >= LOCKEDVERSION
+    System.Runtime.Extensions >= LOCKEDVERSION
+    System.Linq >= LOCKEDVERSION
+files
+    bin/Release/net451/Persimmon.TestRunner.dll ==> build/net451
+    bin/Release/netcoreapp2.0/Persimmon.TestRunner.dll ==> build/netcoreapp2.0
+    ../Persimmon.TestDiscoverer/bin/Release/net451/Persimmon.TestDiscoverer.dll ==> build/net451
+    ../Persimmon.TestDiscoverer/bin/Release/netstandard2.0/Persimmon.TestDiscoverer.dll ==> build/netcoreapp2.0
+    bin/Release/net451/Persimmon.TestAdapter.dll ==> build/net451
+    bin/Release/netcoreapp2.0/Persimmon.TestAdapter.dll ==> build/netcoreapp2.0
+    Persimmon.TestAdapter.props ==> build/net451
+    Persimmon.TestAdapter.props ==> build/netcoreapp2.0

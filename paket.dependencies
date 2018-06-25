@@ -1,0 +1,40 @@
+framework: netcoreapp2.0, netstandard2.0
+source https://api.nuget.org/v3/index.json
+
+nuget FSharp.Core >= 4.1.18 lowest_matching:true
+nuget Microsoft.CSharp >= 4.3.0 lowest_matching:true
+nuget Microsoft.TestPlatform.ObjectModel >= 15.7.2 lowest_matching:true
+nuget Dotnet.ProjInfo ~> 0.7.4
+nuget FSharp.Compiler.Service ~> 13.0
+nuget System.Dynamic.Runtime >= 4.3.0 lowest_matching:true
+nuget System.Threading.Thread >= 4.3.0 lowest_matching:true
+nuget System.Collections >= 4.3.0 lowest_matching:true
+nuget System.Runtime.Extensions >= 4.3.0 lowest_matching:true
+nuget System.Linq >= 4.3.0 lowest_matching:true
+
+group Build
+  source https://api.nuget.org/v3/index.json
+
+  nuget FAKE < 5.0
+  nuget NuGet.CommandLine
+  nuget Octokit = 0.29
+
+  github fsharp/FAKE:2bd41546d8549654ad4d4b5639425537afe5e1f7 modules/Octokit/Octokit.fsx
+
+group Legacy
+  framework: net45, net451
+  source https://api.nuget.org/v3/index.json
+
+  nuget FSharp.Core >= 3.1.2.5 lowest_matching:true
+  nuget Microsoft.CSharp >= 4.3.0 lowest_matching:true
+  nuget Microsoft.TestPlatform.ObjectModel >= 15.5.0 lowest_matching:true
+  nuget FSharp.Compiler.Service ~> 13.0
+  nuget FSharp.Compiler.Service.ProjectCracker ~> 13.0
+
+group Test
+  framework: auto-detect
+  source https://api.nuget.org/v3/index.json
+
+  nuget FSharp.Core ~> 4.3.4
+  nuget Persimmon ~> 3.1.1
+  nuget Microsoft.NET.Test.Sdk >= 15.7.2
