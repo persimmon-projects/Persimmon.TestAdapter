@@ -18,7 +18,7 @@ description
 
   Supported platforms:
     - Desktop .NET 4.5.1+
-    - .NET Core (including ASP.NET Core) 2.0+
+    - .NET Core 2.0+
 dependencies
   framework: net451
     FSharp.Core >= LOCKEDVERSION-Legacy
@@ -30,6 +30,7 @@ dependencies
     FSharp.Core >= LOCKEDVERSION
     Microsoft.CSharp >= LOCKEDVERSION
     Microsoft.TestPlatform.ObjectModel >= LOCKEDVERSION
+    Microsoft.Extensions.DependencyModel >= LOCKEDVERSION
     Dotnet.ProjInfo >= LOCKEDVERSION
     FSharp.Compiler.Service >= LOCKEDVERSION
     System.Dynamic.Runtime >= LOCKEDVERSION

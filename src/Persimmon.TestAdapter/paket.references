@@ -8,6 +8,7 @@ System.Threading.Thread
 System.Collections
 System.Runtime.Extensions
 System.Linq
+Microsoft.Extensions.DependencyModel
 group Legacy
   FSharp.Core
   FSharp.Compiler.Service

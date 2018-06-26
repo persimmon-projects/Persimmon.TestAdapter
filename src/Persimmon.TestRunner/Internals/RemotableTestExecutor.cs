@@ -67,7 +67,11 @@ namespace Persimmon.TestRunner.Internals
             try
             {
 #if NETCORE
-                var testAssembly = Assembly.Load(new AssemblyName(Path.GetFileNameWithoutExtension(targetAssemblyPath)));
+                Assembly testAssembly;
+                using(var context = new AssemblyResolver(targetAssemblyPath))
+                {
+                    testAssembly = context.Assembly;
+                }
 #else
                 // 1. pre-load target assembly and analyze fully-qualified assembly name.
                 //   --> Assebly.ReflectionOnlyLoadFrom() is load assembly into reflection-only context.
@@ -87,8 +91,14 @@ namespace Persimmon.TestRunner.Internals
                             (assembly.Name == persimmonPartialAssemblyName) &&
                             (assembly.GetPublicKeyToken() != null)))
                 {
-                    //   and load persimmon assembly.
+                    // and load persimmon assembly.
+#if NETCORE
+                    using(var context = new AssemblyResolver(persimmonFullAssemblyName))
+                    {
+                        var persimmonAssembly = context.Assembly;
+#else
                     var persimmonAssembly = Assembly.Load(persimmonFullAssemblyName);
+#endif
 
                     // 4. Instantiate TestCollector/TestRunner class (by dynamic), and do action.
                     //   --> Because TestCollector/TestRunner class containing assembly version is unknown,
@@ -109,6 +119,10 @@ namespace Persimmon.TestRunner.Internals
 
                     Trace.WriteLine(message);
                     sinkTrampoline.Message(true, message);
+
+#if NETCORE
+                    }
+#endif
                 }
             }
             catch (Exception ex)
@@ -203,7 +217,7 @@ namespace Persimmon.TestRunner.Internals
                     fullyQualifiedTestName,
                     symbolName,
                     displayName,
-                    testResult.Exceptions, // TODO: exn may failed serialize. try convert safe types...
+                    testResult.Exceptions,
                     testResult.SkipMessages,
                     testResult.FailureMessages,
                     testResult.Duration

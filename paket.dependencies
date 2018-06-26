@@ -11,6 +11,7 @@ nuget System.Threading.Thread >= 4.3.0 lowest_matching:true
 nuget System.Collections >= 4.3.0 lowest_matching:true
 nuget System.Runtime.Extensions >= 4.3.0 lowest_matching:true
 nuget System.Linq >= 4.3.0 lowest_matching:true
+nuget Microsoft.Extensions.DependencyModel >= 2.1.0 lowest_matching:true
 
 group Build
   source https://api.nuget.org/v3/index.json
@@ -36,5 +37,5 @@ group Test
   source https://api.nuget.org/v3/index.json
 
   nuget FSharp.Core ~> 4.3.4
-  nuget Persimmon ~> 3.1.1
+  nuget Persimmon ~> 4.0.1
   nuget Microsoft.NET.Test.Sdk >= 15.7.2

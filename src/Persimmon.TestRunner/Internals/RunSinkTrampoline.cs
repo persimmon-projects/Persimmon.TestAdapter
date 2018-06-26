@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 
@@ -43,7 +44,7 @@ namespace Persimmon.TestRunner.Internals
             string fullyQualifiedTestName = args[0];
             string symbolName = args[1];
             string displayName = args[2];
-            Exception[] exceptions = args[3];
+            Exception[] exceptions = (args[3] as dynamic[]).Select(c => c.Unwrap as Exception).ToArray();
             string[] skips = args[4];
             string[] failures = args[5];
             TimeSpan duration = args[6];
