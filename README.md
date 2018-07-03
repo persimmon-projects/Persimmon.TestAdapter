@@ -13,7 +13,7 @@
 
 ## Environment
 
-* Visual Studio 2015/2017
+* Visual Studio 2017
 
 ## License
 
