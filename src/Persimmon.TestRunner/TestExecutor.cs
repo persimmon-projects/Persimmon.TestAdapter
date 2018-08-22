@@ -178,6 +178,8 @@ namespace Persimmon.TestRunner
 
             try
             {
+                // FIXME: discoverer can not execute... Please update FSharp.Core.Service
+/*
                 // Step1: Parse F# source code and discover AST tree, retreive symbol informations.
                 var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
                     testDiscovererPath_,
@@ -195,6 +197,8 @@ namespace Persimmon.TestRunner
 
                 var symbolDictionary = grouped.
                     ToDictionary(g => g.Key, g => g.Last());
+*/
+                var symbolDictionary = new Dictionary<string, SymbolInformation>();
 
 #if DEBUG
                 foreach (var g in grouped.Where(g => g.Count() >= 2))
