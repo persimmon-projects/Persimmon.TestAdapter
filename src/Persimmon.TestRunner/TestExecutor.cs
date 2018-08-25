@@ -31,9 +31,6 @@ namespace Persimmon.TestRunner
         /// </summary>
         public TestExecutor()
         {
-#if !NETCORE
-            Debug.Assert(this.GetType().Assembly.GlobalAssemblyCache);
-#endif
 
 #if !NETCORE
             var callerAssembly = Assembly.GetCallingAssembly();
@@ -179,17 +176,19 @@ namespace Persimmon.TestRunner
             try
             {
                 // FIXME: discoverer can not execute... Please update FSharp.Core.Service
-/*
-                // Step1: Parse F# source code and discover AST tree, retreive symbol informations.
-                var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
-                    testDiscovererPath_,
-                    testDiscovererTypeName_,
-                    testDiscovererPath_,
-                    discoverer => discoverer.Discover(targetAssemblyPath));
+                /*
+                                // Step1: Parse F# source code and discover AST tree, retreive symbol informations.
+                                var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
+                                    testDiscovererPath_,
+                                    testDiscovererTypeName_,
+                                    testDiscovererPath_,
+                                    discoverer => discoverer.Discover(targetAssemblyPath));
 
-                // Take last item, most deepest information.
-                var grouped = symbols.
-                    GroupBy(symbol => symbol.SymbolName)
+                                // Take last item, most deepest information.
+                                var grouped = symbols
+                */
+                var grouped = new SymbolInformation[] { }
+                    .GroupBy(symbol => symbol.SymbolName)
 #if DEBUG
                     .ToArray()
 #endif
@@ -197,8 +196,6 @@ namespace Persimmon.TestRunner
 
                 var symbolDictionary = grouped.
                     ToDictionary(g => g.Key, g => g.Last());
-*/
-                var symbolDictionary = new Dictionary<string, SymbolInformation>();
 
 #if DEBUG
                 foreach (var g in grouped.Where(g => g.Count() >= 2))

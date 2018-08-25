@@ -21,10 +21,6 @@ namespace Persimmon.TestRunner.Internals
         /// </summary>
         public RemotableTestExecutor()
         {
-#if !NETCORE
-            Debug.Assert(this.GetType().Assembly.GlobalAssemblyCache);
-#endif
-
             Debug.WriteLine(string.Format(
                 "{0}: constructed: Process={1}, Thread=[{2},{3}], AppDomain=[{4},{5},{6}]",
                 this.GetType().FullName,
@@ -113,7 +109,7 @@ namespace Persimmon.TestRunner.Internals
                     }
 
                     var message = string.Format(
-                        "Persimmon.VisualStudio.TestRunner: Cannot found required type (May be mismatched persimmon version) : TargetPath=\"{0}\", PersimmonPath=\"{1}\"",
+                        "Persimmon.TestRunner: Cannot found required type (May be mismatched persimmon version) : TargetPath=\"{0}\", PersimmonPath=\"{1}\"",
                         targetAssemblyPath,
                         new Uri(persimmonAssembly.CodeBase).LocalPath);
 
