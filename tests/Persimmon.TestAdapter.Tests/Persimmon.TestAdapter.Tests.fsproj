@@ -6,11 +6,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="App.config" />
+    <None Include="paket.references" />
     <Compile Include="DiscovererTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Persimmon.TestAdapter\Persimmon.TestAdapter.csproj" />
-    <ProjectReference Include="..\..\src\Persimmon.TestDiscoverer\Persimmon.TestDiscoverer.fsproj" />
     <ProjectReference Include="..\..\src\Persimmon.TestRunner\Persimmon.TestRunner.csproj" />
   </ItemGroup>
   <Import Project="..\..\.paket\Paket.Restore.targets" />

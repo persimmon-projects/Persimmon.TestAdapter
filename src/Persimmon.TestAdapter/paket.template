@@ -35,8 +35,6 @@ dependencies
 files
     bin/Release/net451/Persimmon.TestRunner.dll ==> build/net451
     bin/Release/netcoreapp2.0/Persimmon.TestRunner.dll ==> build/netcoreapp2.0
-    ../Persimmon.TestDiscoverer/bin/Release/net451/Persimmon.TestDiscoverer.dll ==> build/net451
-    ../Persimmon.TestDiscoverer/bin/Release/netstandard2.0/Persimmon.TestDiscoverer.dll ==> build/netcoreapp2.0
     bin/Release/net451/Persimmon.TestAdapter.dll ==> build/net451
     bin/Release/netcoreapp2.0/Persimmon.TestAdapter.dll ==> build/netcoreapp2.0
     Persimmon.TestAdapter.props ==> build/net451

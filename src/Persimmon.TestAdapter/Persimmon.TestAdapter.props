@@ -6,11 +6,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Visible>False</Visible>
     </None>
-    <None Include="$(MSBuildThisFileDirectory)Persimmon.TestDiscoverer.dll">
-      <Link>Persimmon.TestDiscoverer.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Visible>False</Visible>
-    </None>
     <None Include="$(MSBuildThisFileDirectory)Persimmon.TestRunner.dll">
       <Link>Persimmon.TestRunner.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
