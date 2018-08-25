@@ -176,18 +176,17 @@ namespace Persimmon.TestRunner
             try
             {
                 // FIXME: discoverer can not execute... Please update FSharp.Core.Service
-                /*
-                                // Step1: Parse F# source code and discover AST tree, retreive symbol informations.
-                                var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
-                                    testDiscovererPath_,
-                                    testDiscovererTypeName_,
-                                    testDiscovererPath_,
-                                    discoverer => discoverer.Discover(targetAssemblyPath));
+                // Step1: Parse F# source code and discover AST tree, retreive symbol informations.
+                //var symbols = await this.InternalExecuteAsync<IDiscoverer, SymbolInformation[]>(
+                //    testDiscovererPath_,
+                //    testDiscovererTypeName_,
+                //    testDiscovererPath_,
+                //    discoverer => discoverer.Discover(targetAssemblyPath));
+                var symbols = new SymbolInformationDiscoverer(targetAssemblyPath)
+                    .Discover();
 
-                                // Take last item, most deepest information.
-                                var grouped = symbols
-                */
-                var grouped = new SymbolInformation[] { }
+                // Take last item, most deepest information.
+                var grouped = symbols
                     .GroupBy(symbol => symbol.SymbolName)
 #if DEBUG
                     .ToArray()

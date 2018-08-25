@@ -23,6 +23,7 @@ dependencies
   framework: net451
     Microsoft.CSharp >= LOCKEDVERSION-Legacy
     Microsoft.TestPlatform.ObjectModel >= LOCKEDVERSION-Legacy
+    Mono.Cecil >= LOCKEDVERSION-Legacy
   framework: netcoreapp2.0
     Microsoft.CSharp >= LOCKEDVERSION
     Microsoft.TestPlatform.ObjectModel >= LOCKEDVERSION
@@ -32,6 +33,7 @@ dependencies
     System.Collections >= LOCKEDVERSION
     System.Runtime.Extensions >= LOCKEDVERSION
     System.Linq >= LOCKEDVERSION
+    Mono.Cecil >= LOCKEDVERSION-Legacy
 files
     bin/Release/net451/Persimmon.TestRunner.dll ==> build/net451
     bin/Release/netcoreapp2.0/Persimmon.TestRunner.dll ==> build/netcoreapp2.0

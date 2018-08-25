@@ -141,6 +141,15 @@ NUGET
       System.Memory (>= 4.5)
       System.Security.AccessControl (>= 4.5)
       System.Security.Principal.Windows (>= 4.5)
+    Mono.Cecil (0.10)
+      System.Collections (>= 4.0.11)
+      System.IO.FileSystem (>= 4.0.1)
+      System.IO.FileSystem.Primitives (>= 4.0.1)
+      System.Reflection (>= 4.1)
+      System.Runtime.Extensions (>= 4.1)
+      System.Security.Cryptography.Algorithms (>= 4.2)
+      System.Security.Cryptography.Csp (>= 4.0)
+      System.Threading (>= 4.0.11)
     NETStandard.Library (2.0.3)
       Microsoft.NETCore.Platforms (>= 1.1)
     Newtonsoft.Json (11.0.2)
@@ -1280,7 +1289,7 @@ GITHUB
     modules/Octokit/Octokit.fsx (2bd41546d8549654ad4d4b5639425537afe5e1f7)
       Octokit (>= 0.20)
 GROUP Legacy
-RESTRICTION: || (== net45) (== net451)
+RESTRICTION: || (== net40) (== net45) (== net451)
 NUGET
   remote: https://api.nuget.org/v3/index.json
     FSharp.Compiler.Service (13.0)
@@ -1290,12 +1299,13 @@ NUGET
     FSharp.Core (3.1.2.5)
     Microsoft.CSharp (4.3)
     Microsoft.TestPlatform.ObjectModel (15.5)
-      System.Reflection.Metadata (>= 1.3) - restriction: || (&& (== net45) (>= net451)) (&& (== net45) (>= netstandard1.5)) (== net451)
-      System.Runtime.InteropServices.RuntimeInformation (>= 4.3) - restriction: || (&& (== net45) (>= net451)) (== net451)
+      System.Reflection.Metadata (>= 1.3) - restriction: || (&& (== net40) (>= net451)) (&& (== net40) (>= netstandard1.5)) (&& (== net45) (>= net451)) (&& (== net45) (>= netstandard1.5)) (== net451)
+      System.Runtime.InteropServices.RuntimeInformation (>= 4.3) - restriction: || (&& (== net40) (>= net451)) (&& (== net45) (>= net451)) (== net451)
+    Mono.Cecil (0.10)
     System.Collections.Immutable (1.5)
     System.Reflection.Metadata (1.6)
-      System.Collections.Immutable (>= 1.5)
-    System.Runtime.InteropServices.RuntimeInformation (4.3) - restriction: || (&& (== net45) (>= net451)) (== net451)
+      System.Collections.Immutable (>= 1.5) - restriction: || (&& (== net40) (>= net45)) (&& (== net40) (>= netstandard1.1)) (&& (== net40) (>= netstandard2.0)) (&& (== net40) (>= portable-net45+win8+wpa81)) (&& (== net40) (>= win8)) (&& (== net40) (>= wpa81)) (== net45) (== net451)
+    System.Runtime.InteropServices.RuntimeInformation (4.3) - restriction: || (&& (== net40) (>= net451)) (&& (== net45) (>= net451)) (== net451)
 
 GROUP Test
 RESTRICTION: || (== net451) (== netcoreapp2.0) (== netstandard2.0)
