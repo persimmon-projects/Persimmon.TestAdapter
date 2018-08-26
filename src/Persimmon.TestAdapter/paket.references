@@ -10,4 +10,3 @@ Mono.Cecil
 group Legacy
   Microsoft.CSharp
   Microsoft.TestPlatform.ObjectModel
-  Mono.Cecil
