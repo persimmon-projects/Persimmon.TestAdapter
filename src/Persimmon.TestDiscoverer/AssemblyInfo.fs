@@ -4,14 +4,14 @@ open System.Reflection
 
 [<assembly: AssemblyTitleAttribute("Persimmon.TestDiscoverer")>]
 [<assembly: AssemblyProductAttribute("Persimmon.TestAdapter")>]
-[<assembly: AssemblyVersionAttribute("0.11.0")>]
-[<assembly: AssemblyFileVersionAttribute("0.11.0")>]
+[<assembly: AssemblyVersionAttribute("0.12.0")>]
+[<assembly: AssemblyFileVersionAttribute("0.12.0")>]
 [<assembly: AssemblyConfigurationAttribute("Release")>]
 do ()
 
 module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyTitle = "Persimmon.TestDiscoverer"
     let [<Literal>] AssemblyProduct = "Persimmon.TestAdapter"
-    let [<Literal>] AssemblyVersion = "0.11.0"
-    let [<Literal>] AssemblyFileVersion = "0.11.0"
+    let [<Literal>] AssemblyVersion = "0.12.0"
+    let [<Literal>] AssemblyFileVersion = "0.12.0"
     let [<Literal>] AssemblyConfiguration = "Release"
