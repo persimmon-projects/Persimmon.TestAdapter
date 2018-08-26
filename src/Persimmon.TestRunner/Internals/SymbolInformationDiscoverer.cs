@@ -22,7 +22,7 @@
 
 // port from https://github.com/adamchester/expecto-adapter/blob/9.0.0/src/Expecto.VisualStudio.TestAdapter/SourceLocation.fs
 
-#if NETCORE
+/*
 
 using System;
 using System.Collections.Generic;
@@ -115,4 +115,4 @@ namespace Persimmon.TestRunner.Internals
     }
 }
 
-#endif
+*/

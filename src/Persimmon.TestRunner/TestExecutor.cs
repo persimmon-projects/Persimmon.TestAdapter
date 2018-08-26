@@ -182,15 +182,13 @@ namespace Persimmon.TestRunner
                 //    testDiscovererTypeName_,
                 //    testDiscovererPath_,
                 //    discoverer => discoverer.Discover(targetAssemblyPath));
-#if NETCORE
-                var symbols = new SymbolInformationDiscoverer(targetAssemblyPath)
-                    .Discover();
+
+                // var symbols = new SymbolInformationDiscoverer(targetAssemblyPath)
+                //     .Discover();
 
                 // Take last item, most deepest information.
-                var grouped = symbols
-#else
+                // var grouped = symbols
                 var grouped = new SymbolInformation[] { }
-#endif
                     .GroupBy(symbol => symbol.SymbolName)
 #if DEBUG
                     .ToArray()

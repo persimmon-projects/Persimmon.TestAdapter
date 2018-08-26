@@ -23,7 +23,6 @@ dependencies
   framework: net451
     Microsoft.CSharp >= LOCKEDVERSION-Legacy
     Microsoft.TestPlatform.ObjectModel >= LOCKEDVERSION-Legacy
-    Mono.Cecil >= LOCKEDVERSION-Legacy
   framework: netcoreapp2.0
     Microsoft.CSharp >= LOCKEDVERSION
     Microsoft.TestPlatform.ObjectModel >= LOCKEDVERSION

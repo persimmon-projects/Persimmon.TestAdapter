@@ -6,7 +6,6 @@ System.Collections
 System.Runtime.Extensions
 System.Linq
 Microsoft.Extensions.DependencyModel
-Mono.Cecil
 group Legacy
   Microsoft.CSharp
   Microsoft.TestPlatform.ObjectModel
