@@ -1,3 +1,6 @@
+### 0.12.0-beta2 - August 26 2018
+- fix some discover and runner bugs
+
 ### 0.12.0-beta1 - August 26 2018
 - fix some discover bugs
 
